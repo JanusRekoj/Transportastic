@@ -7,7 +7,7 @@ import flask
 
 # Path to static HTML/JS/CSS files that are served for the WebUI
 # also check in APIController.py when handler gets bound to address
-static_html_folder = "webserver/web-ui/dist"
+static_html_folder = "webserver/pixida-web-ui/dist"
 
 
 class WebServer:
@@ -37,7 +37,7 @@ class WebServer:
         @self._app.route('/<path:p>/<filename>', methods=['GET'])
         def serve_files(p, filename):
             # Serve additional files
-            return flask.send_from_directory(static_html_folder+p, filename)
+            return flask.send_from_directory(static_html_folder+'/'+p, filename)
 
     def start_server(self) -> None:
         # Start server
