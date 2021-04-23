@@ -1,7 +1,8 @@
 import pandas as pd 
 
 class DataStore:
-    pass
+    def __init__(self, path_root = '', ):
+
 
 if __name__ == "__main__":
     path_root = '~/Projekte/ScienceHack/'
