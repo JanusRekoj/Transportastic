@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 import csv
 
 class Position(ABC):
-  
 
   @abstractmethod
   def getLatLon(self):
@@ -43,7 +42,6 @@ class GPS(Position):
           print(f'\t{col}: {row[col]}')
         line_count += 1
         print(f'Processed {line_count} lines.')
-
 
 class Station(Position):
   pass
