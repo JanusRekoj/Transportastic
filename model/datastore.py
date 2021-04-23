@@ -57,7 +57,10 @@ class DataStore:
         self.data = self.data.drop(['lat_dir','lon_dir'],1)
 
         if debug:
-            print(self.data.head(50))
+            print(self.data.head(500))
+    
+    def get(self):
+        return self.data
 
 
 if __name__ == "__main__":
