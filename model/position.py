@@ -4,29 +4,33 @@ import csv
 
 class Position(ABC):
   
-    @abstractmethod
-    def getLatLon(self):
-        pass
+
+  @abstractmethod
+  def getLatLon(self):
+    pass
      
-    @abstractmethod
-    def getXY(self):
-        pass
+  @abstractmethod
+  def getXY(self):
+    pass
     
-    @abstractmethod
-    def isDriving(self):
-        pass
+  @abstractmethod
+  def isDriving(self):
+    pass
 
 
 class GPS(Position):
-  def __init__(self, lat, lon, dirs, heading, speed, time):
-    self.lat = lat
-    self.lon = lon
-    self.dirs = dirs
-    self.heading.heading
-    self.speed = speed
-    self.time = time
+  def __init__(self):
+    self.is_valid = False
+    self.latitude = None
+    self.lat_dir = None
+    self.longitude = None
+    self.lon_dir = None
+    self.speed_over_ground_knots = None
+    self.heading_true_course = None
+    self.epoch_ts = None
 
   def parse(self, filepath):
+    colnames = ['date_time','is_valid','latitude','lat_dir','longitude','lon_dir','speed_over_ground_knots','heading_true_course','epoch_ts']
     with open(filepath, mode='r') as csv_file:
       csv_reader = csv.DictReader(csv_file)
       line_count = 0
@@ -39,8 +43,8 @@ class GPS(Position):
           print(f'\t{col}: {row[col]}')
         line_count += 1
         print(f'Processed {line_count} lines.')
-    
-    
+
+
 class Station(Position):
-    pass
+  pass
  
