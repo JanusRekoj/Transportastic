@@ -14,8 +14,7 @@ class DataStore:
             df1l.append(df1)
 
             df2 = pd.read_csv(path_root+'data/' + trip + '/passenger_count_nums',',',comment='S') # Ignore Starting Time
-            df2['epoch_ts'] = pd.to_datetime(df2['Epoch_Time'], unit = 's')
-            df2['epoch_ts'] = pd.to_datetime(df2['epoch_ts'], unit='s')
+            df2['epoch_ts'] = pd.to_datetime(df2['Epoch_Time'].astype(float).round().astype(int), unit = 's')
             df2 = df2.drop('Epoch_Time', 1)
             with open(path_root + 'data/' + trip + '/passenger_count_nums', 'r') as f:
                 line = f.readlines()[1]
@@ -39,11 +38,26 @@ class DataStore:
             print(passenger)
             print(wifi)
         
-        #= Merge to one =#
-        data = pd.merge(gpsdata, passenger, how='left', on=["epoch_ts"])
-        print(data)
-        print(data.head(50))
+        #= Merge to one and remove irrelevant data =#
+        self.data = pd.merge(gpsdata, passenger, how='left', on=['epoch_ts'])
+        if debug:
+            print(self.data)
+            print(self.data.head(50))
+        
+        idx_close = self.data[self.data['Number_of_Passengers']==-10].index.values
+        idx_open = self.data[self.data['Number_of_Passengers']==-99].index.values
+        idx_value = self.data[self.data['Number_of_Passengers']>=0].index.values
 
+        for i_c, i_o, i_v in zip(idx_close, idx_open, idx_value):
+            print(f'Setting {i_c} : {i_o} = {i_v}')
+            self.data.loc[(i_c+1):(i_o-1), 'Number_of_Passengers'] = self.data['Number_of_Passengers'][i_v]
+
+        self.data.loc[self.data['Number_of_Passengers']<0, 'Number_of_Passengers'] = -1
+        self.data['Number_of_Passengers'] = self.data['Number_of_Passengers'].fillna(-1)
+        self.data = self.data.drop(['lat_dir','lon_dir'],1)
+
+        if debug:
+            print(self.data.head(50))
 
 
 if __name__ == "__main__":
