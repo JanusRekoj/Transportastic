@@ -10,7 +10,7 @@ class Controller:
         # Init class attributes
         # self.model = Model() # TODO: Create / Initialize model
         self.server = WebServer(self, host='127.0.0.1', port=10000)
-        self._data = 0
+        self._data = 10
         self._data_lock = threading.Lock()
         self._model_thread = threading.Thread(
             target=self._run_model, daemon=True, args=(self._data_lock, ))
@@ -25,7 +25,8 @@ class Controller:
         while True:
             time.sleep(1)
             lock.acquire()
-            self._data += 1
+            self._data += 10
+            self._data = self._data % 100
             lock.release()
 
     # TODO: Define interface methods that can be called from server to obtain data

@@ -27,7 +27,7 @@ class WebServer:
         @self._app.route('/data', methods=['GET'])
         def data():
             # Data interface
-            return "data = {}".format(self._controller.get_data())
+            return "{}".format(self._controller.get_data())
 
         @self._app.route('/favicon.ico', methods=['GET'])
         def serve_favicon():
