@@ -7,8 +7,10 @@ Vue.use( Vuex );
 
 const baseURL = 'http://localhost:10000'
 
+// For dummy time simulation
 const baseDatetime = Date.parse("2021-04-12T09:22:22");
 const initialTime = Date.now();
+const now_time = () => new Date( baseDatetime + Date.now() - initialTime )
 
 const state = {
     data : {},
@@ -41,7 +43,7 @@ function callDataAPI(commit, params) {
 //to handle actions
 const actions = {
     getData( { commit } ) {
-        const endTime = new Date( baseDatetime + Date.now() - initialTime )
+        const endTime = now_time()
         let startTime = new Date(endTime);
         let durationInSeconds = 3;
         startTime.setSeconds(endTime.getSeconds() - durationInSeconds);
