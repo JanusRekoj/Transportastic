@@ -30,7 +30,6 @@
 <script>
 // @ is an alias to /src
 import VueApexCharts from "vue-apexcharts";
-import axios from "axios";
 import Map from "@/components/Map.vue";
 import { mapState } from 'vuex';
 
@@ -43,7 +42,7 @@ export default {
   computed: mapState(['data']),
   created() {
     this.$store.dispatch("startAutoUpdate");
-    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+    this.unsubscribe = this.$store.subscribe((mutation) => {
       if (mutation.type === 'addData') {
         this.update();
       }
