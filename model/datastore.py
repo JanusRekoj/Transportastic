@@ -66,9 +66,8 @@ class DataStore:
 
             #df3 = (pd.read_csv(path_root+'data/' + trip + '/wifi_data.csv',';'))
             df3 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'wifi_data.csv'), ';'))
-            df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'], unit = 's')
+            df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'].astype(float).round().astype(int), unit = 's')
             df3 = df3.drop('arr_ts', 1)
-            df3['line'] = trip
             df3l.append(df3)
         
         #= Merge each dataframe =#
@@ -83,6 +82,8 @@ class DataStore:
         
         #= Merge to one and remove irrelevant data =#
         self.data = pd.merge(gpsdata, passenger, how='left', on=['epoch_ts'])
+        self.data = pd.merge(wifi, self.data, how='left', on=['epoch_ts'])
+
         if debug:
             print(self.data)
             print(self.data.head(50))
