@@ -31,7 +31,7 @@ class WebServer:
             # Data interface
             # datetime.fromtimestamp(ms/1000.0) # JS uses ms, unix is in s
             # start_time = request.args.get('start', default=None, type=None)
-
+            # print(request.args)
             start_time = datetime.fromtimestamp(float(request.args.get('start'))/1000.0)
             end_time = datetime.fromtimestamp(float(request.args.get('end'))/1000.0)
             lineid = request.args.get('line')

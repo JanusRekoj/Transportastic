@@ -1,111 +1,83 @@
 <template>
   <div class="usecase">
     <b-card class="mx-5 my-2" title="Heat Map" sub-title="">
-      <apexchart
-        type="heatmap"
-        height="350"
-        :options="chartOptions"
-        :series="series"
-      ></apexchart>
+      <HeatMap></HeatMap>
     </b-card>
 
     <b-card class="mx-5 my-2" title="Map" sub-title="">
       <div class="row">
         <div class="col-3 mt-5">
-          <BusElement />
+          <BusElement></BusElement>
         </div>
         <div class="col-9">
           <Map></Map>
         </div>
       </div>
     </b-card>
-
-    <!-- <div id="chart" class="m-5"></div>
-    <h1>Chart 2</h1>
-    <div id="heat-wrapper">
-      <div id="heat-overlay" class="text-center">
-        <v-stage :config="configKonva">
-          <v-layer>
-            <v-circle :config="configCircle"></v-circle>
-          </v-layer>
-        </v-stage>
-      </div>
-      <div id="heat-image" class="text-center">
-        <img src="@/assets/bus_view.jpg" />
-      </div>
-    </div> -->
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import VueApexCharts from "vue-apexcharts";
-import axios from "axios";
-import BusElement from "../components/BusElement.vue";
-import Map from "../components/Map.vue";
+import Map from "@/components/Map.vue";
+import { mapState } from "vuex";
+import HeatMap from "@/components/Heatmap.vue";
+import BusElement from "@/components/BusElement.vue";
 
 export default {
   name: "UseCase",
   components: {
-    apexchart: VueApexCharts,
+    HeatMap,
     BusElement,
     Map,
   },
+  computed: mapState(["data"]),
   created() {
-    // this.timer = setInterval(this.autoUpdate, 750);
+    this.$store.dispatch("startAutoUpdate");
+    this.unsubscribe = this.$store.subscribe((mutation) => {
+      if (mutation.type === "addData") {
+        this.update();
+      }
+    });
+  },
+  unmounted() {
+    this.$store.dispatch("stopAutoUpdate"); // TODO check which component started and which stopped!
+  },
+  beforeDestroy() {
+    this.unsubscribe();
   },
   methods: {
-    autoUpdate() {
-      const endtime = new Date("2021-04-12 09:23:22");
-      let starttime = endtime;
-      let durationInMinutes = 1;
-      starttime.setMinutes(endtime.getMinutes() - durationInMinutes);
-      const params = {
-        start: starttime.getTime(),
-        end: endtime.getTime(),
-        line: "trip_1",
-        // bus: 'bus_trip_1',
-        // station:
-      };
-      axios.get("/data", { params }).then(
-        (result) => {
-          // console.log("Data: ", result.data);
-          this.configCircle.radius = result.data;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    },
+    // autoUpdate() {
+    //   const endtime = new Date("2021-04-12 09:23:22");
+    //   let starttime = endtime;
+    //   let durationInMinutes = 1;
+    //   starttime.setMinutes(endtime.getMinutes() - durationInMinutes);
+    //   const params = {
+    //     start: starttime.getTime(),
+    //     end: endtime.getTime(),
+    //     line: "trip_1",
+    //     // bus: 'bus_trip_1',
+    //     // station:
+    //   };
+    //   axios.get("/data", { params }).then(
+    //     (result) => {
+    //       // console.log("Data: ", result.data);
+    //       this.configCircle.radius = result.data;
+    //     },
+    //     (error) => {
+    //       console.error(error);
+    //     }
+    //   );
+    // },
     cancelAutoUpdate() {
       clearInterval(this.timer);
+    },
+    update() {
+      this.configCircle.radius = this.$store.state.data;
     },
   },
   data() {
     return {
-      series: [
-        {
-          name: "Journey 1",
-          data: [0, 10, 20, 40],
-        },
-        {
-          name: "Journey 2",
-          data: [40, 60, 30, 5],
-        },
-      ],
-      chartOptions: {
-        chart: {
-          height: 350,
-          type: "heatmap",
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        colors: ["#008FFB"],
-        title: {
-          text: "HeatMap Chart (Single color)",
-        },
-      },
       configKonva: {
         width: 1000,
         height: 500,

@@ -1,4 +1,5 @@
 import pandas as pd 
+import os
 
 dummy_response_dict = {
     'line123': {
@@ -36,32 +37,38 @@ dummy_response_dict = {
 
 class DataStore:
     def __init__(self, debug=False, path_root=''):
-        trips = ["trip_1","trip_2","trip_3","trip_4","trip_5","trip_6","trip_7","trip_8","trip_9","trip_10","trip_11","trip_12"]
+        trips = sorted(os.listdir(os.path.join(path_root, 'data')), key=len)
+        trips = filter(lambda x: os.path.isdir(os.path.join(path_root, 'data', x)), trips)
+        #trips = ["trip_1","trip_2","trip_3","trip_4","trip_5","trip_6","trip_7","trip_8","trip_9","trip_10","trip_11","trip_12"]
 
         #= Parse the data =#
         df1l = []; df2l = []; df3l = []
         df2_time = []
         for trip in trips:
-            df1 = (pd.read_csv(path_root+'data/' + trip + '/gps_data.csv',','))
+            #df1 = (pd.read_csv(path_root+'data/' + trip + '/gps_data.csv',','))
+            df1 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'gps_data.csv'), ','))
             df1 = df1.drop('date_time', 1)
             df1['epoch_ts'] = pd.to_datetime(df1['epoch_ts'], unit = 's')
             df1['line'] = trip
             df1['bus'] = 'bus_' + trip
             df1l.append(df1)
 
-            df2 = pd.read_csv(path_root+'data/' + trip + '/passenger_count_nums',',',comment='S') # Ignore Starting Time
+            #df2 = pd.read_csv(path_root+'data/' + trip + '/passenger_count_nums',',',comment='S') # Ignore Starting Time
+            df2 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'passenger_count_nums'), ',',comment='S'))
             df2['epoch_ts'] = pd.to_datetime(df2['Epoch_Time'].astype(float).round().astype(int), unit = 's')
             df2 = df2.drop('Epoch_Time', 1)
-            with open(path_root + 'data/' + trip + '/passenger_count_nums', 'r') as f:
+            with open(os.path.join(path_root, 'data', trip, 'passenger_count_nums'), 'r') as f:
                 line = f.readlines()[1]
                 df2_time.append(line)
                 if debug:
                     print(line)
             df2l.append(df2)
 
-            df3 = (pd.read_csv(path_root+'data/' + trip + '/wifi_data.csv',';'))
+            #df3 = (pd.read_csv(path_root+'data/' + trip + '/wifi_data.csv',';'))
+            df3 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'wifi_data.csv'), ';'))
             df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'], unit = 's')
             df3 = df3.drop('arr_ts', 1)
+            df3['line'] = trip
             df3l.append(df3)
         
         #= Merge each dataframe =#
@@ -96,6 +103,7 @@ class DataStore:
         self.data = self.data.drop(['lat_dir','lon_dir'],1)
         self.data.set_index('epoch_ts')
 
+        self.wifi = wifi
         if debug:
             print(self.data.head(50))
             print(self.data)
