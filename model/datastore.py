@@ -3,7 +3,7 @@ import os
 import datetime
 
 class DataStore:
-    def __init__(self, debug=False, path_root='', fake_data=False):
+    def __init__(self, debug=False, path_root='', fake_data=False, common_timestamp=datetime.datetime.now()):
         trips = sorted(os.listdir(os.path.join(path_root, 'data')), key=len)
         trips = filter(lambda x: os.path.isdir(os.path.join(path_root, 'data', x)), trips)
 
@@ -12,12 +12,17 @@ class DataStore:
         if fake_data:
             df1lf = []; df2lf = []; df3lf = []
         df2_time = []
+        self.time_adjustment = None
         for trip in trips:
             df1 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'gps_data.csv'), ','))
             df1 = df1.drop('date_time', 1)
             df1['epoch_ts'] = pd.to_datetime(df1['epoch_ts'], unit = 's')
             df1['line'] = trip
             df1['bus'] = 'Line ' + trip[5:]
+            if common_timestamp is None:
+                self.time_adjustment = df1['epoch_ts'].min() - df1['epoch_ts'].min()  # TODO nicer
+            else:
+                self.time_adjustment = common_timestamp - df1['epoch_ts'].min()
             df1l.append(df1)
             if fake_data:
                 df1lf.append(df1)
@@ -32,6 +37,7 @@ class DataStore:
             df2 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'passenger_count_nums'), ',',comment='S'))
             df2['epoch_ts'] = pd.to_datetime(df2['Epoch_Time'].astype(float).round().astype(int), unit = 's')
             df2 = df2.drop('Epoch_Time', 1)
+            df2['epoch_ts'] = df2['epoch_ts'] + self.time_adjustment
             with open(os.path.join(path_root, 'data', trip, 'passenger_count_nums'), 'r') as f:
                 line = f.readlines()[1]
                 df2_time.append(line)
@@ -51,7 +57,9 @@ class DataStore:
             df3 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'wifi_data.csv'), ';'))
             df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'].astype(float).round().astype(int), unit = 's')
             df3 = df3.drop('arr_ts', 1)
+            df3['epoch_ts'] = df3['epoch_ts'] + self.time_adjustment
             df3l.append(df3)
+            
         
         #= Merge each dataframe =#
         gpsdata   = pd.concat(df1l)
