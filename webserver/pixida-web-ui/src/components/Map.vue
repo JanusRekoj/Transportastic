@@ -161,7 +161,6 @@ export default {
       for(let i = 1; i < points.length; i++) {
         connection.push([points[i-1][0],points[i-1][1],points[i][0],points[i][1],points[i][2]])
       }
-      console.log(connection)
 
       connection.forEach( (pt) => {
         let lineString = new H.geo.LineString();
