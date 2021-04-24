@@ -40,17 +40,16 @@ export default {
   },
   methods: {
     autoUpdate() {
-     axios.get('/data', {
-      params: {
+      const params = {
        start: new Date().getTime() - 1000,
        end: new Date().getTime(),
        line: 'trip_1',
        bus: 'bus_trip_1',
        // station: 
-      }
-     }).then(
+      };
+     axios.get('/data', { params }).then(
         (result) => {
-          console.log("Data: ", result.data);
+          // console.log("Data: ", result.data);
           this.configCircle.radius = result.data;
         },
         (error) => {
