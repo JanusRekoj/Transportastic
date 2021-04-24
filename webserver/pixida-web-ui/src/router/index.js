@@ -10,14 +10,19 @@ const routes = [
         component: () => import('../views/Home.vue') // Allow lazy loading
     },
     {
-        path: '/about',
-        name: 'About',
+        path: '/team',
+        name: 'Team',
         component: () => import('../views/About.vue') // Allow lazy loading
     },
     {
-        path: '/usecase',
-        name: 'UseCase',
+        path: '/company',
+        name: 'Company',
         component: () => import('../views/UseCase.vue') // Allow lazy loading
+    },
+    {
+        path: '/passenger',
+        name: 'Passenger',
+        component: () => import('../views/Passenger.vue') // Allow lazy loading
     },
 ]
 

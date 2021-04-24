@@ -166,7 +166,6 @@ export default {
 
 <style scoped>
 .map {
-  width: 60vw;
   min-width: 360px;
   text-align: center;
   margin: 5% auto;

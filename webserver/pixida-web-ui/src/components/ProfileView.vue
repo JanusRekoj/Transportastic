@@ -1,6 +1,6 @@
 <template>
   <div class="profile">
-    <div class="p-5">
+    <div class="p-5 text-center">
       <b-img
         :src="getImgUrl(this.image)"
         :width="200"
@@ -9,8 +9,8 @@
         class="m1"
         rounded="circle"
       ></b-img>
-      <h1 class="pt-5">{{ this.name }}</h1>
-      <h4>{{ this.role }}</h4>
+      <h2 class="pt-5">{{ this.name }}</h2>
+      <h5>{{ this.role }}</h5>
     </div>
   </div>
 </template>
@@ -19,7 +19,7 @@
 // @ is an alias to /src
 
 export default {
-  name: "NavBar",
+  name: "ProfileView",
   components: {},
   props: {
     name: String,

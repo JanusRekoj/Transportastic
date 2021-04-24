@@ -18,7 +18,8 @@ export default {
 };
 </script>
 
-<style>
+<style src="@/sass/bootstrap.min.css">
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -1,16 +1,23 @@
 <template>
-  <div class="about">
-    <h1 class="display-3 mx-5" >Team</h1>
+  <div class="about text-center">
+    <div class="row justify-content-center">
+        <h1 class="display-2">Team</h1>
+        <b-img
+          src="../assets/transportastic-logo.svg"
+          class="p-2 px-4 align-middle"
+          height="100%"
+        />
+    </div>
     <div class="row mx-3">
       <div v-for="dev in developers" :key="dev.name" class="col-lg-4 col-md-6">
         <profile-view :name="dev.name" :role="dev.role" :image="dev.image" />
       </div>
     </div>
-    <h1 class="display-3 mx-5" >Partners</h1>
-    <div>
-        <img class="m-3" height="50" center src="../assets/tum-logo.png" />
-        <img class="m-3" height="50" center src="../assets/lmu-logo.png" />
-        <img class="m-3" height="50" center src="../assets/pixida-logo.png" />
+    <!-- <h1 class="display-3 mx-5" >Partners</h1> -->
+    <div class="mt-5">
+      <img class="m-3" height="50" center src="../assets/tum-logo.png" />
+      <img class="m-3" height="50" center src="../assets/lmu-logo.png" />
+      <img class="m-3" height="50" center src="../assets/pixida-logo.png" />
     </div>
   </div>
 </template>
@@ -29,7 +36,7 @@ export default {
       developers: [
         {
           name: "Michael Maas",
-          role: "Team Leader",          
+          role: "Team Leader",
           image: "michael.jpg",
         },
         {

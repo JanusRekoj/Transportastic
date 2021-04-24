@@ -1,14 +1,26 @@
 <template>
   <div class="usecase">
-    <h1>Chart 1</h1>
-    <div id="chart" class="m-5">
+    <b-card class="mx-5 my-2" title="Heat Map" sub-title="">
       <apexchart
         type="heatmap"
         height="350"
         :options="chartOptions"
         :series="series"
       ></apexchart>
-    </div>
+    </b-card>
+
+    <b-card class="mx-5 my-2" title="Map" sub-title="">
+      <div class="row">
+        <div class="col-3 mt-5">
+          <BusElement />
+        </div>
+        <div class="col-9">
+          <Map></Map>
+        </div>
+      </div>
+    </b-card>
+
+    <!-- <div id="chart" class="m-5"></div>
     <h1>Chart 2</h1>
     <div id="heat-wrapper">
       <div id="heat-overlay" class="text-center">
@@ -21,9 +33,7 @@
       <div id="heat-image" class="text-center">
         <img src="@/assets/bus_view.jpg" />
       </div>
-    </div>
-    <h1>Chart 3</h1>
-    <Map></Map>
+    </div> -->
   </div>
 </template>
 
@@ -31,12 +41,14 @@
 // @ is an alias to /src
 import VueApexCharts from "vue-apexcharts";
 import axios from "axios";
-import Map from "@/components/Map.vue";
+import BusElement from "../components/BusElement.vue";
+import Map from "../components/Map.vue";
 
 export default {
   name: "UseCase",
   components: {
     apexchart: VueApexCharts,
+    BusElement,
     Map,
   },
   created() {
@@ -44,18 +56,18 @@ export default {
   },
   methods: {
     autoUpdate() {
-      const endtime = new Date('2021-04-12 09:23:22')
+      const endtime = new Date("2021-04-12 09:23:22");
       let starttime = endtime;
       let durationInMinutes = 1;
       starttime.setMinutes(endtime.getMinutes() - durationInMinutes);
       const params = {
-       start: starttime.getTime(),
-       end: endtime.getTime(),
-       line: 'trip_1',
-       // bus: 'bus_trip_1',
-       // station: 
+        start: starttime.getTime(),
+        end: endtime.getTime(),
+        line: "trip_1",
+        // bus: 'bus_trip_1',
+        // station:
       };
-     axios.get('/data', { params }).then(
+      axios.get("/data", { params }).then(
         (result) => {
           // console.log("Data: ", result.data);
           this.configCircle.radius = result.data;
