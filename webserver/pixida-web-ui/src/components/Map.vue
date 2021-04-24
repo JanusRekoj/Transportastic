@@ -116,7 +116,7 @@ export default {
     },
     tmp() {
       // Query data
-      const endTime = new Date("2021-04-12 09:23:22");
+      const endTime = new Date("2021-04-12T09:23:22");
       let startTime = endTime;
       let durationInMinutes = 1;
       startTime.setMinutes(endTime.getMinutes() - durationInMinutes);
@@ -129,6 +129,7 @@ export default {
       // axios({ method: "GET", url: "/data", {params} }).then(
       axios.get("/data", { params }).then(
         (result) => {
+          const data = result.data;
           console.log("Data: ", result.data);
 
           // Update markers

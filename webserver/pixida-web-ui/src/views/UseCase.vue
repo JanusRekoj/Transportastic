@@ -33,6 +33,9 @@ import VueApexCharts from "vue-apexcharts";
 import axios from "axios";
 import Map from "@/components/Map.vue";
 
+// const serveraddress = 'http://localhost:10000';
+const serveraddress = '';
+
 export default {
   name: "UseCase",
   components: {
@@ -40,11 +43,11 @@ export default {
     Map,
   },
   created() {
-    // this.timer = setInterval(this.autoUpdate, 750);
+     this.timer = setInterval(this.autoUpdate, 750);
   },
   methods: {
     autoUpdate() {
-      const endtime = new Date('2021-04-12 09:23:22')
+      const endtime = new Date('2021-04-12T09:23:22')
       let starttime = endtime;
       let durationInMinutes = 1;
       starttime.setMinutes(endtime.getMinutes() - durationInMinutes);
@@ -55,7 +58,7 @@ export default {
        // bus: 'bus_trip_1',
        // station: 
       };
-     axios.get('/data', { params }).then(
+     axios.get(serveraddress + '/data', { params }).then(
         (result) => {
           // console.log("Data: ", result.data);
           this.configCircle.radius = result.data;
