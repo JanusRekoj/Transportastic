@@ -35,11 +35,42 @@ class DataProvider:
                 real_workload[counter] = curr_workload
         return df[['epoch_ts', 'Number_of_Passengers']]
 
-    def get_workload_wifi_data(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+    def cluster_data(self, df_timeintverval):
+        num_station = 1
+        num_ride = 1
+      
+        df_phase_transition = df_timeintverval['Number_of_Passengers'].diff()
+        list_indices_phase_transition = df_phase_transition[df_phase_transition != 0].index 
+        list_indices_phase_transition = list_indices_phase_transition - list_indices_phase_transition[0]
+        cluster_indices = list(zip(list_indices_phase_transition[:-1], list_indices_phase_transition[1:]))
+
+        dict_rides = {}
+        dict_stations = {}
+        for indices in cluster_indices:
+            phase = df_timeintverval.iloc[indices[0] : indices[1]]
+            if phase.iloc[0].Number_of_Passengers < 0:
+                dict_stations[f'station_{num_station}'] = phase
+                num_station += 1
+            else:
+                dict_rides[f'ride_{num_ride}'] = phase
+                num_ride += 1
+        return dict_stations, dict_rides
+
+    def get_oocupancy_wifi_data_third_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+        df_trip = self.data[self.data['line'] == str_bus_trip]
+        df_trip_timeslot = df_trip[(df_trip['epoch_ts']>start_time) & (df_trip['epoch_ts']<end_time)]
+        dict_stations, dict_rides = self.cluster_data(df_trip_timeslot.iloc[2:])
+
+        #First test with rides only
+        for ride in dict_rides:
+            df_ride = dict_rides[ride]
+            mac_addresses = df_ride.mac_address.unique()
+
+    def get_oocupancy_wifi_data_second_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
         df_trip = self.data[self.data['line'] == str_bus_trip]
         df_trip_timeslot = df_trip[(df_trip['epoch_ts']>start_time) & (df_trip['epoch_ts']<end_time)]
 
-
+        
         list_mac_addresses = df_trip_timeslot.mac_address.unique()
         dict_mac_addresses = {}
 
