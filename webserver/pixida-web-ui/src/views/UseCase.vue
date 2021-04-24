@@ -44,9 +44,17 @@ export default {
   },
   methods: {
     autoUpdate() {
-      axios({ method: "GET", url: "/data" }).then(
+      const currenttime = new Date('2021-04-12 09:22:22')
+      const params = {
+       start: new Date('2021-04-12 09:22:22').getTime() - 1000,
+       end: currenttime,
+       line: 'trip_1',
+       bus: 'bus_trip_1',
+       // station: 
+      };
+     axios.get('/data', { params }).then(
         (result) => {
-          console.log("Data: ", result.data);
+          // console.log("Data: ", result.data);
           this.configCircle.radius = result.data;
         },
         (error) => {
