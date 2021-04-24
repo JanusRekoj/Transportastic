@@ -57,19 +57,19 @@ export default {
                 ranges: [{
                     from: 0.75,
                     to: 1.0,
-                    color: '#ff0000',
+                    color: '#aa0000',
                     name: 'high',
                 },
                 {
                     from: 0.5,
                     to: 0.75,
-                    color: '#ffff00',
+                    color: '#aaaa00',
                     name: 'medium',
                 },
                 {
                     from: 0.0,
                     to: 0.5,
-                    color: '#00ff00',
+                    color: '#00aa00',
                     name: 'low',
                 }
                 ]
