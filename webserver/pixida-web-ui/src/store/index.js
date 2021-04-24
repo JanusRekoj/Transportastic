@@ -22,7 +22,6 @@ function callDataAPI(commit, params) {
     axios.get( baseURL + '/data', { params } )
     .then( response => {
         commit('addData', response.data)
-        commit('changeLastUpdateState', endTime)
     } )
 }
 
@@ -39,9 +38,11 @@ const actions = {
             // line: "trip_1",
         };
         callDataAPI(commit, params);
+        commit('changeLastUpdateState', endTime)
     },
     getAllData( {commit} ) {
-        callDataAPI(commit, params);
+        // callDataAPI(commit, params);
+        commit('changeLastUpdateState', new Date())
     },
     startAutoUpdate( { dispatch } ) {
         if (state.timer === null) {
