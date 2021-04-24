@@ -40,9 +40,10 @@ export default {
   },
   methods: {
     autoUpdate() {
+      const currenttime = new Date('2021-04-12 09:22:22')
       const params = {
-       start: new Date().getTime() - 1000,
-       end: new Date().getTime(),
+       start: new Date('2021-04-12 09:22:22').getTime() - 1000,
+       end: currenttime,
        line: 'trip_1',
        bus: 'bus_trip_1',
        // station: 

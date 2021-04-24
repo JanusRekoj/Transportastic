@@ -94,12 +94,15 @@ class DataStore:
         self.data.loc[self.data['Number_of_Passengers']<0, 'Number_of_Passengers'] = -1
         self.data['Number_of_Passengers'] = self.data['Number_of_Passengers'].fillna(-1)
         self.data = self.data.drop(['lat_dir','lon_dir'],1)
+        self.data.set_index('epoch_ts')
 
         if debug:
             print(self.data.head(50))
             print(self.data)
     
     def get(self, start_time, end_time, lineid, busid, station):
+        timeframe =  self.data[(self.data['epoch_ts'] > start_time) & (self.data['epoch_ts'] <= end_time)]
+        print(timeframe)
         return dummy_response_dict
 
 
