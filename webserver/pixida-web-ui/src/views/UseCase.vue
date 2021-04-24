@@ -44,12 +44,15 @@ export default {
   },
   methods: {
     autoUpdate() {
-      const currenttime = new Date('2021-04-12 09:22:22')
+      const endtime = new Date('2021-04-12 09:23:22')
+      let starttime = endtime;
+      let durationInMinutes = 1;
+      starttime.setMinutes(endtime.getMinutes() - durationInMinutes);
       const params = {
-       start: new Date('2021-04-12 09:22:22').getTime() - 1000,
-       end: currenttime,
+       start: starttime.getTime(),
+       end: endtime.getTime(),
        line: 'trip_1',
-       bus: 'bus_trip_1',
+       // bus: 'bus_trip_1',
        // station: 
       };
      axios.get('/data', { params }).then(
