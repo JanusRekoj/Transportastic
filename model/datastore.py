@@ -45,6 +45,8 @@ class DataStore:
             df1 = (pd.read_csv(path_root+'data/' + trip + '/gps_data.csv',','))
             df1 = df1.drop('date_time', 1)
             df1['epoch_ts'] = pd.to_datetime(df1['epoch_ts'], unit = 's')
+            df1['line'] = trip
+            df1['bus'] = 'bus_' + trip
             df1l.append(df1)
 
             df2 = pd.read_csv(path_root+'data/' + trip + '/passenger_count_nums',',',comment='S') # Ignore Starting Time
@@ -94,7 +96,8 @@ class DataStore:
         self.data = self.data.drop(['lat_dir','lon_dir'],1)
 
         if debug:
-            print(self.data.head(500))
+            print(self.data.head(50))
+            print(self.data)
     
     def get(self, start_time, end_time, lineid, busid, station):
         return dummy_response_dict
