@@ -9,7 +9,6 @@
         class="m1"
         rounded="circle"
       ></b-img>
-      <p>{{ this.tmp }}</p>
       <h1 class="pt-5">{{ this.name }}</h1>
       <h4>{{ this.role }}</h4>
     </div>
