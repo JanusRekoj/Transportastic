@@ -47,7 +47,7 @@ export default {
     // Tutorial has the following in created() {}
     this.unsubscribe = this.$store.subscribe((mutation) => {
       if (mutation.type === 'addData') {
-        this.addPolylineToMap([(48.1517826,11.5259065), (48.1717826,11.5459065)]);
+        this.addPolylineToMap([[48.1517826,11.5259065,100], [48.1717826,11.5459065,100]]);
         this.updateMap();
       }
     });
@@ -156,16 +156,22 @@ export default {
     },
     addPolylineToMap(points) {
       const H = window.H;
-      var lineString = new H.geo.LineString();
-
-
-      for (const pt in points) {
-        lineString.pushPoint({lat:pt[0], lng:pt[1]}); // pt[2] is occupancy
+    
+      let connection = []
+      for(let i = 1; i < points.length; i++) {
+        connection.push([points[i-1][0],points[i-1][1],points[i][0],points[i][1],points[i][2]])
       }
+      console.log(connection)
 
-      this.map.addObject(new H.map.Polyline(
-        lineString, { style: { lineWidth: 4 }}
-      ));
+      connection.forEach( (pt) => {
+        let lineString = new H.geo.LineString();
+        lineString.pushPoint({lat:pt[0], lng:pt[1]});
+        lineString.pushPoint({lat:pt[2], lng:pt[3]});
+        // TODO use pt[4] for color
+        this.map.addObject(new H.map.Polyline(
+          lineString, { style: { lineWidth: 4, strokeColor: '#A10000', fillColor: 'rgba(0, 85, 170, 0.4)' }, zIndex:0}
+        ));
+      });
     },
     getImgUrl(pic) {
       return require("../assets/" + pic);
