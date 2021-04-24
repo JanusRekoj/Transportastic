@@ -10,7 +10,7 @@
 
 <script>
 // @ is an alias to /src
-import axios from "axios";
+import { mapState } from 'vuex';
 
 export default {
   name: "Map",
@@ -34,6 +34,7 @@ export default {
   props: {
     center: Object,
   },
+  computed: mapState(['data']),
   async mounted() {
     // Initialize the platform object:
     const platform = new window.H.service.Platform({
@@ -42,7 +43,20 @@ export default {
     this.platform = platform;
     this.initializeHereMap();
     this.$store.dispatch("startAutoUpdate");
-    // this.timer = setInterval(this.tmp, 1000);
+    // Tutorial has the following in created() {}
+    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      if (mutation.type === 'addData') {
+        console.log(`Updating data!`);
+
+        this.updateMap();
+      }
+    });
+  },
+  unmounted() {
+    this.$store.dispatch("stopAutoUpdate"); // TODO check which component started and which stopped!
+  },
+  beforeDestroy() {
+    this.unsubscribe();
   },
   methods: {
     initializeHereMap() {
@@ -115,49 +129,30 @@ export default {
 
       //   router.calculateRoute(routeRequestParams, {}, {});
     },
-    tmp() {
-      // Query data
-      const endTime = new Date("2021-04-12T09:23:22");
-      let startTime = endTime;
-      let durationInMinutes = 1;
-      startTime.setMinutes(endTime.getMinutes() - durationInMinutes);
-      const params = {
-        start: startTime.getTime(),
-        end: endTime.getTime(),
-        line: "trip_1",
-      };
+    updateMap() {
+      const data = this.$store.state.data
+      console.log("Data: ", data);
 
-      // axios({ method: "GET", url: "/data", {params} }).then(
-      axios.get("/data2", { params }).then(
-        (result) => {
-          const data = result.data;
-          console.log("Data: ", data);
+      // Update markers
+      // Position
+      let l = this.markers.bus1.getGeometry();
+      //   console.log(l);
+      this.markers.bus1.setGeometry({ lat: l.lat + 0.0001, lng: l.lng });
 
-          // Update markers
-          // Position
-          let l = this.markers.bus1.getGeometry();
-          //   console.log(l);
-          this.markers.bus1.setGeometry({ lat: l.lat + 0.0001, lng: l.lng });
+      // Icon (Occupancy)
+      this.occ += 10;
+      this.occ = this.occ % 100;
+      let icon = this.busIcon;
 
-          // Icon (Occupancy)
-          this.occ += 10;
-          this.occ = this.occ % 100;
-          let icon = this.busIcon;
+      if (this.occ > 75) {
+        icon = this.busHighIcon;
+      } else if (this.occ > 50) {
+        icon = this.busMediumIcon;
+      } else if (this.occ > 0) {
+        icon = this.busLowIcon;
+      }
 
-          if (this.occ > 75) {
-            icon = this.busHighIcon;
-          } else if (this.occ > 50) {
-            icon = this.busMediumIcon;
-          } else if (this.occ > 0) {
-            icon = this.busLowIcon;
-          }
-
-          this.markers.bus1.setIcon(icon);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
+      this.markers.bus1.setIcon(icon);
     },
     getImgUrl(pic) {
       return require("../assets/" + pic);
