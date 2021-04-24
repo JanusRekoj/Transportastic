@@ -121,8 +121,8 @@ export default {
       let durationInMinutes = 1;
       startTime.setMinutes(endTime.getMinutes() - durationInMinutes);
       const params = {
-        start: new Date(),
-        end: new Date(),
+        start: startTime.getTime(),
+        end: endTime.getTime(),
         line: "trip_1",
       };
 
