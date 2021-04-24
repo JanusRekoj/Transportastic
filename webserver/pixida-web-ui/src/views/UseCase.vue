@@ -32,9 +32,7 @@
 import VueApexCharts from "vue-apexcharts";
 import axios from "axios";
 import Map from "@/components/Map.vue";
-
-// const serveraddress = 'http://localhost:10000';
-const serveraddress = '';
+import { mapState } from 'vuex';
 
 export default {
   name: "UseCase",
@@ -42,35 +40,24 @@ export default {
     apexchart: VueApexCharts,
     Map,
   },
+  computed: mapState(['data']),
   created() {
-     // this.timer = setInterval(this.autoUpdate, 750);
-     this.$store.dispatch("startAutoUpdate");
+    this.$store.dispatch("startAutoUpdate");
+    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      if (mutation.type === 'addData') {
+        this.update();
+      }
+    });
+  },
+  unmounted() {
+    this.$store.dispatch("stopAutoUpdate"); // TODO check which component started and which stopped!
+  },
+  beforeDestroy() {
+    this.unsubscribe();
   },
   methods: {
-    autoUpdate() {
-      const endtime = new Date('2021-04-12T09:23:22')
-      let starttime = endtime;
-      let durationInMinutes = 1;
-      starttime.setMinutes(endtime.getMinutes() - durationInMinutes);
-      const params = {
-       start: starttime.getTime(),
-       end: endtime.getTime(),
-       line: 'trip_1',
-       // bus: 'bus_trip_1',
-       // station: 
-      };
-     axios.get(serveraddress + '/data2', { params }).then(
-        (result) => {
-          // console.log("Data: ", result.data);
-          this.configCircle.radius = result.data;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    },
-    cancelAutoUpdate() {
-      clearInterval(this.timer);
+    update() {
+      this.configCircle.radius = this.$store.state.data;
     },
   },
   data() {

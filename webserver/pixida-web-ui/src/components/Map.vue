@@ -46,8 +46,6 @@ export default {
     // Tutorial has the following in created() {}
     this.unsubscribe = this.$store.subscribe((mutation, state) => {
       if (mutation.type === 'addData') {
-        console.log(`Updating data!`);
-
         this.updateMap();
       }
     });
@@ -130,8 +128,8 @@ export default {
       //   router.calculateRoute(routeRequestParams, {}, {});
     },
     updateMap() {
-      const data = this.$store.state.data
-      console.log("Data: ", data);
+      //const data = this.$store.state.data
+      //console.log("Data: ", data);
 
       // Update markers
       // Position
