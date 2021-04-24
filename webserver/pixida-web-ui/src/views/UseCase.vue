@@ -22,6 +22,8 @@
         <img src="@/assets/bus_view.jpg" />
       </div>
     </div>
+    <h1>Chart 3</h1>
+    <Map></Map>
   </div>
 </template>
 
@@ -29,22 +31,28 @@
 // @ is an alias to /src
 import VueApexCharts from "vue-apexcharts";
 import axios from "axios";
+import Map from "@/components/Map.vue";
 
 export default {
   name: "UseCase",
   components: {
     apexchart: VueApexCharts,
+    Map,
   },
   created() {
-    this.timer = setInterval(this.autoUpdate, 750);
+    // this.timer = setInterval(this.autoUpdate, 750);
   },
   methods: {
     autoUpdate() {
+      const endtime = new Date('2021-04-12 09:23:22')
+      let starttime = endtime;
+      let durationInMinutes = 1;
+      starttime.setMinutes(endtime.getMinutes() - durationInMinutes);
       const params = {
-       start: new Date().getTime() - 1000,
-       end: new Date().getTime(),
+       start: starttime.getTime(),
+       end: endtime.getTime(),
        line: 'trip_1',
-       bus: 'bus_trip_1',
+       // bus: 'bus_trip_1',
        // station: 
       };
      axios.get('/data', { params }).then(
