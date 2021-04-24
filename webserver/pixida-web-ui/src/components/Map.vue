@@ -10,7 +10,7 @@
 
 <script>
 // @ is an alias to /src
-import { mapState } from 'vuex';
+import { mapState } from "vuex";
 
 export default {
   name: "Map",
@@ -22,19 +22,16 @@ export default {
       busLowIcon: {},
       busMidIcon: {},
       busHighIcon: {},
-      markers: {
-        bus1: {},
-        bus2: {},
-      },
+      map: {},
+      markers: [],
       mapInitCenter: { lat: 48.116839, lng: 11.599253 },
-      mapInitZoom: 13,
-      occ: 0,
+      mapInitZoom: 14,
     };
   },
   props: {
     center: Object,
   },
-  computed: mapState(['data']),
+  computed: mapState(["data"]),
   async mounted() {
     // Initialize the platform object:
     const platform = new window.H.service.Platform({
@@ -45,7 +42,7 @@ export default {
     this.$store.dispatch("startAutoUpdate");
     // Tutorial has the following in created() {}
     this.unsubscribe = this.$store.subscribe((mutation, state) => {
-      if (mutation.type === 'addData') {
+      if (mutation.type === "addData") {
         this.updateMap();
       }
     });
@@ -65,17 +62,17 @@ export default {
       var maptypes = this.platform.createDefaultLayers();
 
       // Instantiate (and display) a map object:
-      var map = new H.Map(mapContainer, maptypes.vector.normal.map, {
+      this.map = new H.Map(mapContainer, maptypes.vector.normal.map, {
         zoom: this.mapInitZoom,
         center: this.mapInitCenter,
       });
-      addEventListener("resize", () => map.getViewPort().resize());
+      addEventListener("resize", () => this.map.getViewPort().resize());
 
       // Add behavior control
-      new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+      new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map));
 
       // Add UI
-      H.ui.UI.createDefault(map, maptypes);
+      H.ui.UI.createDefault(this.map, maptypes);
 
       // Init marker icon
       this.busIcon = new H.map.Icon(this.getImgUrl("bus.png"), {
@@ -94,63 +91,68 @@ export default {
         size: { w: 40, h: 48 },
       });
 
-      // Create all markers
-      this.markers.bus1 = new H.map.Marker(this.mapInitCenter, {
-        icon: this.busLowIcon,
-      });
-      this.markers.bus2 = new H.map.Marker(this.mapInitCenter, {
-        icon: this.busMediumIcon,
-      });
-      this.markers.bus3 = new H.map.Marker(this.mapInitCenter, {
-        icon: this.busHighIcon,
-      });
+      //   // Create all markers
+      //   this.markers.bus1 = new H.map.Marker(this.mapInitCenter, {
+      //     icon: this.busLowIcon,
+      //   });
+      //   this.markers.bus2 = new H.map.Marker(this.mapInitCenter, {
+      //     icon: this.busMediumIcon,
+      //   });
+      //   this.markers.bus3 = new H.map.Marker(this.mapInitCenter, {
+      //     icon: this.busHighIcon,
+      //   });
 
-      // Add the marker to the map:
-      for (const [bus] of Object.entries(this.markers)) {
-        map.addObject(this.markers[bus]);
-      }
-      //   this.markers.forEach(m => map.addObject(m))
-      //   map.addObject(this.markers.bus1);
-      //   map.addObject(this.markers.bus2);
-      //   map.addObject(this.markers.bus3);
-
-      // Highlight route
-      //   var router = this.platform.getRoutingService(),
-      //     routeRequestParams = {
-      //       mode: "fastest;car",
-      //       representation: "display",
-      //       routeattributes: "waypoints,summary,shape,legs",
-      //       maneuverattributes: "direction,action",
-      //       waypoint0: "48.116839,11.599253",
-      //       waypoint1: "48.116939,11.599373",
-      //     };
-
-      //   router.calculateRoute(routeRequestParams, {}, {});
+      //   // Add the marker to the map:
+      //   for (const [bus] of Object.entries(this.markers)) {
+      //     map.addObject(this.markers[bus]);
+      //   }
+    },
+    addMarker(bus, pos) {
+      const H = window.H;
+      let marker = new H.map.Marker(pos, {
+        icon: this.busIcon,
+      });
+      this.markers[bus] = marker;
+      this.map.addObject(marker);
     },
     updateMap() {
-      //const data = this.$store.state.data
-      //console.log("Data: ", data);
+      // Get data
+      const data = this.$store.state.data;
+      // console.log("Data: ", data);
 
-      // Update markers
-      // Position
-      let l = this.markers.bus1.getGeometry();
-      //   console.log(l);
-      this.markers.bus1.setGeometry({ lat: l.lat + 0.0001, lng: l.lng });
+      // For all lines
+      for (let line in data) {
+        let lineObj = data[line];
+        // console.log(lineObj);
+        // For all busses
+        for (let bus in lineObj) {
+          let busObj = lineObj[bus];
+          // console.log(busObj);
+          let pos =
+            busObj["trajectory"][busObj["trajectory"].length - 1]["position"];
+          let gpsPos = { lat: pos.lat, lng: pos.lon };
+          let occupancy = busObj["trajectory"]["occupancy"];
+          let capacity = busObj["businfo"]["capacity"];
+          let ratio = occupancy / capacity;
 
-      // Icon (Occupancy)
-      this.occ += 10;
-      this.occ = this.occ % 100;
-      let icon = this.busIcon;
-
-      if (this.occ > 75) {
-        icon = this.busHighIcon;
-      } else if (this.occ > 50) {
-        icon = this.busMediumIcon;
-      } else if (this.occ > 0) {
-        icon = this.busLowIcon;
+          if (bus in this.markers) {
+            // Update markers
+            this.markers[bus].setGeometry(gpsPos);
+            let icon = this.busIcon;
+            if (ratio > 0.75) {
+              icon = this.busHighIcon;
+            } else if (ratio > 0.5) {
+              icon = this.busMediumIcon;
+            } else if (ratio > 0.0) {
+              icon = this.busLowIcon;
+            }
+            this.markers[bus].setIcon(icon);
+          } else {
+            // Create marker
+            this.addMarker(bus, gpsPos);
+          }
+        }
       }
-
-      this.markers.bus1.setIcon(icon);
     },
     getImgUrl(pic) {
       return require("../assets/" + pic);
