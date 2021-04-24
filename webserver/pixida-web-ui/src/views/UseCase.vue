@@ -1,14 +1,7 @@
 <template>
   <div class="usecase">
     <h1>Chart 1</h1>
-    <div id="chart" class="m-5">
-      <apexchart
-        type="heatmap"
-        height="350"
-        :options="chartOptions"
-        :series="series"
-      ></apexchart>
-    </div>
+    <HeatMap></HeatMap>
     <h1>Chart 2</h1>
     <div id="heat-wrapper">
       <div id="heat-overlay" class="text-center">
@@ -29,14 +22,14 @@
 
 <script>
 // @ is an alias to /src
-import VueApexCharts from "vue-apexcharts";
 import Map from "@/components/Map.vue";
 import { mapState } from 'vuex';
+import HeatMap from "@/components/Heatmap.vue";
 
 export default {
   name: "UseCase",
   components: {
-    apexchart: VueApexCharts,
+    HeatMap,
     Map,
   },
   computed: mapState(['data']),
@@ -61,29 +54,6 @@ export default {
   },
   data() {
     return {
-      series: [
-        {
-          name: "Journey 1",
-          data: [0, 10, 20, 40],
-        },
-        {
-          name: "Journey 2",
-          data: [40, 60, 30, 5],
-        },
-      ],
-      chartOptions: {
-        chart: {
-          height: 350,
-          type: "heatmap",
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        colors: ["#008FFB"],
-        title: {
-          text: "HeatMap Chart (Single color)",
-        },
-      },
       configKonva: {
         width: 1000,
         height: 500,
