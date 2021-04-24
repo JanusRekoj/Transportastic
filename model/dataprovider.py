@@ -58,17 +58,15 @@ class DataProvider:
                 num_ride += 1
         return dict_stations, dict_rides
 
-    def get_oocupancy_wifi_data_third_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
-        df_trip = self.data[self.data['line'] == str_bus_trip]
-        df_trip_timeslot = df_trip[(df_trip['epoch_ts']>start_time) & (df_trip['epoch_ts']<end_time)]
-        dict_stations, dict_rides = self.cluster_data(df_trip_timeslot.iloc[2:])
+    def get_occupancy_wifi_data_third_approach(self, str_bus_trip: str, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+        dict_stations, dict_rides = self.cluster_data(str_bus_trip, start_time, end_time)
 
         #First test with rides only
         for ride in dict_rides:
             df_ride = dict_rides[ride]
             mac_addresses = df_ride.mac_address.unique()
 
-    def get_oocupancy_wifi_data_second_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+    def get_occupancy_wifi_data_second_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
         df_trip = self.data[self.data['line'] == str_bus_trip]
         df_trip_timeslot = df_trip[(df_trip['epoch_ts']>start_time) & (df_trip['epoch_ts']<end_time)]
 
@@ -106,7 +104,7 @@ class DataProvider:
 
         return dict_mac_addresses, counting_array
 
-    def get_oocupancy_wifi_data_first_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+    def get_occupancy_wifi_data_first_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
         #@Nika pls add your code here :D
         pass
         
