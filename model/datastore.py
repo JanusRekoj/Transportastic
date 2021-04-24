@@ -37,7 +37,9 @@ dummy_response_dict = {
 
 class DataStore:
     def __init__(self, debug=False, path_root=''):
-        trips = ["trip_1","trip_2","trip_3","trip_4","trip_5","trip_6","trip_7","trip_8","trip_9","trip_10","trip_11","trip_12"]
+        trips = sorted(os.listdir(os.path.join(path_root, 'data')), key=len)
+        trips = filter(lambda x: os.path.isdir(os.path.join(path_root, 'data', x)), trips)
+        #trips = ["trip_1","trip_2","trip_3","trip_4","trip_5","trip_6","trip_7","trip_8","trip_9","trip_10","trip_11","trip_12"]
 
         #= Parse the data =#
         df1l = []; df2l = []; df3l = []
@@ -66,6 +68,7 @@ class DataStore:
             df3 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'wifi_data.csv'), ';'))
             df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'], unit = 's')
             df3 = df3.drop('arr_ts', 1)
+            df3['line'] = trip
             df3l.append(df3)
         
         #= Merge each dataframe =#
@@ -100,6 +103,7 @@ class DataStore:
         self.data = self.data.drop(['lat_dir','lon_dir'],1)
         self.data.set_index('epoch_ts')
 
+        self.wifi = wifi
         if debug:
             print(self.data.head(50))
             print(self.data)
