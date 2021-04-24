@@ -39,6 +39,7 @@ export default {
         chart: {
           height: 350,
           type: "heatmap",
+          foreColor: "#FFFFFF",
         },
         xaxis: {
           categories: [
@@ -83,19 +84,19 @@ export default {
                 {
                   from: 0.75,
                   to: 1.0,
-                  color: "#A10000",
+                  color: "#aa0000",
                   name: "high",
                 },
                 {
                   from: 0.5,
                   to: 0.75,
-                  color: "#128FD9",
+                  color: "#aaaa00",
                   name: "medium",
                 },
                 {
                   from: 0.0,
                   to: 0.5,
-                  color: "#0000A1",
+                  color: "#00aa00",
                   name: "low",
                 },
               ],

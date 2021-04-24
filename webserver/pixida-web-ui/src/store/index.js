@@ -18,11 +18,18 @@ const getters = {
     trip: ( trip, state ) => state.data[trip]
 }
 
+function callDataAPI(commit, params) {
+    axios.get( baseURL + '/data', { params } )
+    .then( response => {
+        commit('addData', response.data)
+    } )
+}
+
 //to handle actions
 const actions = {
     getData( { commit } ) {
         const endTime = new Date("2021-04-12T09:23:22");
-        let startTime = endTime;
+        let startTime = new Date(endTime);
         let durationInMinutes = 1;
         startTime.setMinutes(endTime.getMinutes() - durationInMinutes);
         const params = {
@@ -30,11 +37,12 @@ const actions = {
             end: endTime.getTime(),
             // line: "trip_1",
         };
-        axios.get( baseURL + '/data', { params } )
-            .then( response => {
-                commit('addData', response.data)
-                commit('changeLastUpdateState', endTime)
-            } )
+        callDataAPI(commit, params);
+        commit('changeLastUpdateState', endTime)
+    },
+    getAllData( {commit} ) {
+        // callDataAPI(commit, params);
+        commit('changeLastUpdateState', new Date())
     },
     startAutoUpdate( { dispatch } ) {
         if (state.timer === null) {

@@ -1,40 +1,6 @@
 import pandas as pd 
 import os
 
-dummy_response_dict = {
-    'line123': {
-        'bus1': {
-            'businfo': {
-                'seats': 50,
-                'capacity': 100
-            },
-            'trajectory': [{
-                'timestamp': 10000,
-                'position': {
-                    'lat': 10.0,
-                    'lon': 10.0,
-                    'speed': 10.0,
-                    'heading': 200.0
-                },
-                'station': None,
-                'occupancy': 10
-            },
-            {
-                'timestamp': 10010,
-                'position': {
-                    'lat': 10.1,
-                    'lon': 10.1,
-                    'speed': 0.0,
-                    'heading': 100.0
-                },
-                'station': 'Hauptbahnhof',
-                'occupancy': 10
-            }]
-        }
-    }
-}
-
-
 class DataStore:
     def __init__(self, debug=False, path_root=''):
         trips = sorted(os.listdir(os.path.join(path_root, 'data')), key=len)
@@ -66,9 +32,8 @@ class DataStore:
 
             #df3 = (pd.read_csv(path_root+'data/' + trip + '/wifi_data.csv',';'))
             df3 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'wifi_data.csv'), ';'))
-            df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'], unit = 's')
+            df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'].astype(float).round().astype(int), unit = 's')
             df3 = df3.drop('arr_ts', 1)
-            df3['line'] = trip
             df3l.append(df3)
         
         #= Merge each dataframe =#
@@ -83,6 +48,7 @@ class DataStore:
         
         #= Merge to one and remove irrelevant data =#
         self.data = pd.merge(gpsdata, passenger, how='left', on=['epoch_ts'])
+
         if debug:
             print(self.data)
             print(self.data.head(50))
@@ -97,6 +63,13 @@ class DataStore:
             if debug:
                 print(f'Setting {i_c} : {i_o} = {i_v}')
             self.data.loc[(i_c+1):(i_o-1), 'Number_of_Passengers'] = self.data['Number_of_Passengers'][i_v]
+
+
+        self.data = pd.merge(wifi, self.data, how='left', on=['epoch_ts'])
+
+        if debug:
+            print(self.data)
+            print(self.data.head(50))
 
         self.data.loc[self.data['Number_of_Passengers']<0, 'Number_of_Passengers'] = -1
         self.data['Number_of_Passengers'] = self.data['Number_of_Passengers'].fillna(-1)
