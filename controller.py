@@ -34,6 +34,6 @@ class Controller:
         self._data_lock.release()
         return data
 
-
-# Main Script to launch app
-Controller()
+if __name__ == "__main__":
+    # Main Script to launch app
+    Controller()
