@@ -48,8 +48,11 @@ class DataStore:
         idx_open = self.data[self.data['Number_of_Passengers']==-99].index.values
         idx_value = self.data[self.data['Number_of_Passengers']>=0].index.values
 
+        # TODO Ensure suitable data: i_c < i_v < i_o !!
+
         for i_c, i_o, i_v in zip(idx_close, idx_open, idx_value):
-            print(f'Setting {i_c} : {i_o} = {i_v}')
+            if debug:
+                print(f'Setting {i_c} : {i_o} = {i_v}')
             self.data.loc[(i_c+1):(i_o-1), 'Number_of_Passengers'] = self.data['Number_of_Passengers'][i_v]
 
         self.data.loc[self.data['Number_of_Passengers']<0, 'Number_of_Passengers'] = -1
