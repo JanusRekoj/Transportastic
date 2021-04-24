@@ -6,36 +6,6 @@ import threading
 from model import datastore
 import pandas as pd
 
-dummy_response_dict = {
-    'track_1': {
-        'businfo': {
-            'seats': 50,
-            'capacity': 100
-        },
-        'trajectory': [{
-            'timestamp': 10000,
-            'position': {
-                'lat': 10.0,
-                'lon': 10.0,
-                'speed': 10.0,
-                'heading': 200.0
-            },
-            'station': None,
-            'occupancy': 10
-        },
-        {
-            'timestamp': 10010,
-            'position': {
-                'lat': 10.1,
-                'lon': 10.1,
-                'speed': 0.0,
-                'heading': 100.0
-            },
-            'station': 'Hauptbahnhof',
-            'occupancy': 10
-        }]
-    }
-}
 
 
 class Controller:
@@ -72,15 +42,19 @@ class Controller:
         lines = pd.unique(timeframe['line'])
         response = {}
         for l in lines:
+            # bus_id = 'bus_' + l
+            bus_id = 'Linie ' + l[5:]
             response[l] = {
-                'businfo': {
-                    'seats': 50,
-                    'capacity': 100
-                },
-                'trajectory': []
+                bus_id: {
+                    'businfo': {
+                        'seats': 50,
+                        'capacity': 100
+                    },
+                    'trajectory': []
+                }
             }
             for index, data in timeframe[timeframe['line'] == l].iterrows():
-                response[l]['trajectory'].append({
+                response[l][bus_id]['trajectory'].append({
                     'timestamp': data['epoch_ts'],
                     'position': {
                         'lat': data['latitude'],
