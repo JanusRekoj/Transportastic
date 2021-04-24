@@ -29,11 +29,11 @@ class WebServer:
         @self._app.route('/data', methods=['GET'])
         def data():
             # Data interface
-            # datetime.fromtimestamp(ms/1000.0)
-            start_time = request.args.get('start') # default=None, type=None)
-            print(start_time)
-            print(request.args)
-            end_time = request.args.get('end')
+            # datetime.fromtimestamp(ms/1000.0) # JS uses ms, unix is in s
+            # start_time = request.args.get('start', default=None, type=None)
+
+            start_time = datetime.fromtimestamp(float(request.args.get('start'))/1000.0)
+            end_time = datetime.fromtimestamp(float(request.args.get('end'))/1000.0)
             lineid = request.args.get('line')
             busid = request.args.get('bus')
             station = request.args.get('station')
