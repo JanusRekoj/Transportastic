@@ -1,40 +1,6 @@
 import pandas as pd 
 import os
 
-dummy_response_dict = {
-    'line123': {
-        'bus1': {
-            'businfo': {
-                'seats': 50,
-                'capacity': 100
-            },
-            'trajectory': [{
-                'timestamp': 10000,
-                'position': {
-                    'lat': 10.0,
-                    'lon': 10.0,
-                    'speed': 10.0,
-                    'heading': 200.0
-                },
-                'station': None,
-                'occupancy': 10
-            },
-            {
-                'timestamp': 10010,
-                'position': {
-                    'lat': 10.1,
-                    'lon': 10.1,
-                    'speed': 0.0,
-                    'heading': 100.0
-                },
-                'station': 'Hauptbahnhof',
-                'occupancy': 10
-            }]
-        }
-    }
-}
-
-
 class DataStore:
     def __init__(self, debug=False, path_root=''):
         trips = sorted(os.listdir(os.path.join(path_root, 'data')), key=len)
