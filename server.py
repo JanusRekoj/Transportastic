@@ -4,6 +4,7 @@ from __future__ import annotations
 # Imports
 import flask
 from flask import request
+from flask import json
 
 # Path to static HTML/JS/CSS files that are served for the WebUI
 # also check in APIController.py when handler gets bound to address
@@ -32,7 +33,13 @@ class WebServer:
             lineid = request.args.get('line')
             busid = request.args.get('bus')
             station = request.args.get('station')
-            return "{}".format(self._controller.get_data(start_time, end_time, lineid, busid, station))
+
+            response = self._app.response_class(
+                response=json.dumps(self._controller.get_data(start_time, end_time, lineid, busid, station)),
+                status=200,
+                mimetype='application/json'
+            )
+            return response
 
         @self._app.route('/favicon.ico', methods=['GET'])
         def serve_favicon():
