@@ -24,7 +24,7 @@ class DataStore:
                 starting_time = df1['epoch_ts'].min()
                 ending_time = df1['epoch_ts'].max()
                 delta = ending_time - starting_time
-                for i in range(1,100):
+                for i in range(1,10):
                     df1_cp = df1.copy(deep=True)
                     df1_cp['epoch_ts'] = df1['epoch_ts'] + i*delta
                     df1lf.append(df1_cp)
@@ -39,14 +39,14 @@ class DataStore:
                     print(line)
             df2l.append(df2)
             if fake_data:
-                df1lf.append(df2)
+                df2lf.append(df2)
                 starting_time = df2['epoch_ts'].min()
                 ending_time = df2['epoch_ts'].max()
                 delta = ending_time - starting_time
-                for i in range(1,100):
+                for i in range(1,10):
                     df2_cp = df2.copy(deep=True)
                     df2_cp['epoch_ts'] = df2_cp['epoch_ts'] + i*delta
-                    df1lf.append(df2_cp)
+                    df2lf.append(df2_cp)
 
             df3 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'wifi_data.csv'), ';'))
             df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'].astype(float).round().astype(int), unit = 's')
@@ -99,14 +99,11 @@ class DataStore:
             idx_close = self.data2[self.data2['Number_of_Passengers']==-10].index.values
             idx_open = self.data2[self.data2['Number_of_Passengers']==-99].index.values
             idx_value = self.data2[self.data2['Number_of_Passengers']>=0].index.values
-
-            # TODO Ensure suitable data: i_c < i_v < i_o !!
-
             for i_c, i_o, i_v in zip(idx_close, idx_open, idx_value):
                 if debug:
                     print(f'Setting {i_c} : {i_o} = {i_v}')
                 self.data2.loc[(i_c+1):(i_o-1), 'Number_of_Passengers'] = self.data2['Number_of_Passengers'][i_v]
-            self.data2.loc[self.data['Number_of_Passengers']<0, 'Number_of_Passengers'] = -1
+            self.data2.loc[self.data2['Number_of_Passengers']<0, 'Number_of_Passengers'] = -1
             self.data2['Number_of_Passengers'] = self.data2['Number_of_Passengers'].fillna(-1)
             self.data2 = self.data2.drop(['lat_dir','lon_dir'],1)
             self.data2.set_index('epoch_ts')
