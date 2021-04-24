@@ -6,9 +6,13 @@
 
     <b-card class="mx-5 my-2" title="Map" sub-title="">
       <div class="row">
-        <div class="col-3 mt-5">
-          <BusElement></BusElement>
-        </div>
+        <b-list-group class="col-3 mt-5">
+          <div v-for="bus in busList" :key="bus.name">
+            <b-list-group-item v-on:click="tmp(bus)">
+              <BusElement :name="bus.name" :data="bus.data"></BusElement>
+            </b-list-group-item>
+          </div>
+        </b-list-group>
         <div class="col-9">
           <Map></Map>
         </div>
@@ -47,56 +51,54 @@ export default {
     this.unsubscribe();
   },
   methods: {
-    // autoUpdate() {
-    //   const endtime = new Date("2021-04-12 09:23:22");
-    //   let starttime = endtime;
-    //   let durationInMinutes = 1;
-    //   starttime.setMinutes(endtime.getMinutes() - durationInMinutes);
-    //   const params = {
-    //     start: starttime.getTime(),
-    //     end: endtime.getTime(),
-    //     line: "trip_1",
-    //     // bus: 'bus_trip_1',
-    //     // station:
-    //   };
-    //   axios.get("/data", { params }).then(
-    //     (result) => {
-    //       // console.log("Data: ", result.data);
-    //       this.configCircle.radius = result.data;
-    //     },
-    //     (error) => {
-    //       console.error(error);
-    //     }
-    //   );
-    // },
+    tmp(bus) {
+      console.log(bus.name);
+    },
     cancelAutoUpdate() {
       clearInterval(this.timer);
     },
     update() {
-      this.configCircle.radius = this.$store.state.data;
+      //   this.configCircle.radius = this.$store.state.data;
+
+      // Get data
+      const data = this.$store.state.data;
+      // For all lines
+      for (let line in data) {
+        let lineObj = data[line];
+        // console.log(lineObj);
+        // For all busses
+        for (let bus in lineObj) {
+          let busObj = lineObj[bus];
+          // Add bus object to list if not available
+          if (!this.busList.some((e) => e.name === bus)) {
+            this.busList.push({ name: bus, data: busObj });
+          }
+        }
+      }
     },
   },
   data() {
     return {
-      configKonva: {
-        width: 1000,
-        height: 500,
-      },
-      configCircle: {
-        x: 600,
-        y: 100,
-        radius: 20,
-        fill: "red",
-        stroke: "black",
-        strokeWidth: 4,
-      },
+      busList: [],
+      //   configKonva: {
+      //     width: 1000,
+      //     height: 500,
+      //   },
+      //   configCircle: {
+      //     x: 600,
+      //     y: 100,
+      //     radius: 20,
+      //     fill: "red",
+      //     stroke: "black",
+      //     strokeWidth: 4,
+      //   },
     };
   },
 };
 </script>
 
 <style scoped>
-#heat-wrapper {
+/* #heat-wrapper {
   position: relative;
   width: 100%;
 }
@@ -110,6 +112,5 @@ export default {
   width: 100%;
   height: 100%;
   top: 0%;
-  /* background-color: red; */
-}
+} */
 </style>

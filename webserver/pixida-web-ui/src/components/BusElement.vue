@@ -1,12 +1,22 @@
 <template>
   <div class="bus">
-    <div class="text-center">
-      <h4 class="text-center">{{ this.name }} </h4>
+    <div class="row text-center">
+      <h5 class="text-center col mx-auto my-auto p-1">
+        {{ this.name }}
+      </h5>
       <b-img
-        src="../assets/bus_occ_low.png"
+        :src="this.image"
+        class="col mx-auto my-auto"
         width="150"
         height="60"
       ></b-img>
+      <p class="col mx-auto my-auto p-1">
+        {{
+          this.data.trajectory[this.data.trajectory.length - 1].occupancy +
+          "/" +
+          this.data.businfo.capacity
+        }}
+      </p>
     </div>
   </div>
 </template>
@@ -17,27 +27,44 @@
 export default {
   name: "Bus",
   components: {},
-    props: {
-      name: String,
-      occupancy: Number,
+  props: {
+    name: String,
+    data: Object,
+  },
+  computed: {
+    image() {
+      // Compute relative occupancy
+      let ratio =
+        this.data.trajectory[this.data.trajectory.length - 1].occupancy /
+        this.data.businfo.capacity;
+
+      // Choose image based on current occupancy
+      if (ratio > 0.9) {
+        return this.getImgUrl("bus_occ_high_2.png");
+      } else if (ratio > 0.75) {
+        return this.getImgUrl("bus_occ_high_1.png");
+      } else if (ratio > 0.6) {
+        return this.getImgUrl("bus_occ_medium_2.png");
+      } else if (ratio > 0.5) {
+        return this.getImgUrl("bus_occ_medium_1.png");
+      } else if (ratio > 0.25) {
+        return this.getImgUrl("bus_occ_low_2.png");
+      } else if (ratio > 0.0) {
+        return this.getImgUrl("bus_occ_low_1.png");
+      } else {
+        return this.getImgUrl("bus_occ.png");
+      }
     },
-  //   computed: {
-  //     speed() {
-  //       let speed = this.$store.getters.getSensorData("autopilot-tachometer");
-  //       let speedString = "-";
-  //       if (speed) speedString = speed.speed.toFixed(3) + " m/s";
-
-  // getImgUrl();
-
-  //       return speedString;
-  //     },
-  //   },
+  },
   data() {
-    return {};
+    return {
+      //   currentOccupancy: 10,
+      //   maxCapacity: 100,
+    };
   },
   methods: {
     getImgUrl(pic) {
-      return require("../assets/profile_images/" + pic);
+      return require("../assets/" + pic);
     },
   },
 };

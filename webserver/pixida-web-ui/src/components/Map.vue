@@ -10,7 +10,7 @@
 
 <script>
 // @ is an alias to /src
-import { mapState } from 'vuex';
+import { mapState } from "vuex";
 
 export default {
   name: "Map",
@@ -22,20 +22,16 @@ export default {
       busLowIcon: {},
       busMidIcon: {},
       busHighIcon: {},
-      markers: {
-        bus1: {},
-        bus2: {},
-      },
+      map: {},
+      markers: [],
       mapInitCenter: { lat: 48.116839, lng: 11.599253 },
-      mapInitZoom: 13,
-      occ: 0,
-      map: null,
+      mapInitZoom: 14,
     };
   },
   props: {
     center: Object,
   },
-  computed: mapState(['data']),
+  computed: mapState(["data"]),
   async mounted() {
     // Initialize the platform object:
     const platform = new window.H.service.Platform({
@@ -46,8 +42,11 @@ export default {
     this.$store.dispatch("startAutoUpdate");
     // Tutorial has the following in created() {}
     this.unsubscribe = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'addData') {
-        this.addPolylineToMap([[48.1517826,11.5259065,100], [48.1717826,11.5459065,100]]);
+      if (mutation.type === "addData") {
+        this.addPolylineToMap([
+          [48.1517826, 11.5259065, 100],
+          [48.1717826, 11.5459065, 100],
+        ]);
         this.updateMap();
       }
     });
@@ -96,80 +95,98 @@ export default {
         size: { w: 40, h: 48 },
       });
 
-      // Create all markers
-      this.markers.bus1 = new H.map.Marker(this.mapInitCenter, {
-        icon: this.busLowIcon,
-      });
-      this.markers.bus2 = new H.map.Marker(this.mapInitCenter, {
-        icon: this.busMediumIcon,
-      });
-      this.markers.bus3 = new H.map.Marker(this.mapInitCenter, {
-        icon: this.busHighIcon,
-      });
+      //   // Create all markers
+      //   this.markers.bus1 = new H.map.Marker(this.mapInitCenter, {
+      //     icon: this.busLowIcon,
+      //   });
+      //   this.markers.bus2 = new H.map.Marker(this.mapInitCenter, {
+      //     icon: this.busMediumIcon,
+      //   });
+      //   this.markers.bus3 = new H.map.Marker(this.mapInitCenter, {
+      //     icon: this.busHighIcon,
+      //   });
 
-      // Add the marker to the map:
-      for (const [bus] of Object.entries(this.markers)) {
-        this.map.addObject(this.markers[bus]);
-      }
-      //   this.markers.forEach(m => map.addObject(m))
-      //   map.addObject(this.markers.bus1);
-      //   map.addObject(this.markers.bus2);
-      //   map.addObject(this.markers.bus3);
-
-      // Highlight route
-      //   var router = this.platform.getRoutingService(),
-      //     routeRequestParams = {
-      //       mode: "fastest;car",
-      //       representation: "display",
-      //       routeattributes: "waypoints,summary,shape,legs",
-      //       maneuverattributes: "direction,action",
-      //       waypoint0: "48.116839,11.599253",
-      //       waypoint1: "48.116939,11.599373",
-      //     };
-
-      //   router.calculateRoute(routeRequestParams, {}, {});
+      //   // Add the marker to the map:
+      //   for (const [bus] of Object.entries(this.markers)) {
+      //     map.addObject(this.markers[bus]);
+      //   }
+    },
+    addMarker(bus, pos) {
+      const H = window.H;
+      let marker = new H.map.Marker(pos, {
+        icon: this.busIcon,
+      });
+      this.markers[bus] = marker;
+      this.map.addObject(marker);
     },
     updateMap() {
-      //const data = this.$store.state.data
-      //console.log("Data: ", data);
+      // Get data
+      const data = this.$store.state.data;
+      // console.log("Data: ", data);
 
-      // Update markers
-      // Position
-      let l = this.markers.bus1.getGeometry();
-      //   console.log(l);
-      this.markers.bus1.setGeometry({ lat: l.lat + 0.0001, lng: l.lng });
+      // For all lines
+      for (let line in data) {
+        let lineObj = data[line];
+        // console.log(lineObj);
+        // For all busses
+        for (let bus in lineObj) {
+          let busObj = lineObj[bus];
+          // console.log(busObj);
+          let pos =
+            busObj["trajectory"][busObj["trajectory"].length - 1]["position"];
+          let gpsPos = { lat: pos.lat, lng: pos.lon };
+          let occupancy = busObj["trajectory"]["occupancy"];
+          let capacity = busObj["businfo"]["capacity"];
+          let ratio = occupancy / capacity;
 
-      // Icon (Occupancy)
-      this.occ += 10;
-      this.occ = this.occ % 100;
-      let icon = this.busIcon;
-
-      if (this.occ > 75) {
-        icon = this.busHighIcon;
-      } else if (this.occ > 50) {
-        icon = this.busMediumIcon;
-      } else if (this.occ > 0) {
-        icon = this.busLowIcon;
+          if (bus in this.markers) {
+            // Update markers
+            this.markers[bus].setGeometry(gpsPos);
+            let icon = this.busIcon;
+            if (ratio > 0.75) {
+              icon = this.busHighIcon;
+            } else if (ratio > 0.5) {
+              icon = this.busMediumIcon;
+            } else if (ratio > 0.0) {
+              icon = this.busLowIcon;
+            }
+            this.markers[bus].setIcon(icon);
+          } else {
+            // Create marker
+            this.addMarker(bus, gpsPos);
+          }
+        }
       }
-
-      this.markers.bus1.setIcon(icon);
     },
     addPolylineToMap(points) {
       const H = window.H;
-    
-      let connection = []
-      for(let i = 1; i < points.length; i++) {
-        connection.push([points[i-1][0],points[i-1][1],points[i][0],points[i][1],points[i][2]])
+
+      let connection = [];
+      for (let i = 1; i < points.length; i++) {
+        connection.push([
+          points[i - 1][0],
+          points[i - 1][1],
+          points[i][0],
+          points[i][1],
+          points[i][2],
+        ]);
       }
 
-      connection.forEach( (pt) => {
+      connection.forEach((pt) => {
         let lineString = new H.geo.LineString();
-        lineString.pushPoint({lat:pt[0], lng:pt[1]});
-        lineString.pushPoint({lat:pt[2], lng:pt[3]});
+        lineString.pushPoint({ lat: pt[0], lng: pt[1] });
+        lineString.pushPoint({ lat: pt[2], lng: pt[3] });
         // TODO use pt[4] for color
-        this.map.addObject(new H.map.Polyline(
-          lineString, { style: { lineWidth: 4, strokeColor: '#A10000', fillColor: 'rgba(0, 85, 170, 0.4)' }, zIndex:0}
-        ));
+        this.map.addObject(
+          new H.map.Polyline(lineString, {
+            style: {
+              lineWidth: 4,
+              strokeColor: "#A10000",
+              fillColor: "rgba(0, 85, 170, 0.4)",
+            },
+            zIndex: 0,
+          })
+        );
       });
     },
     getImgUrl(pic) {
