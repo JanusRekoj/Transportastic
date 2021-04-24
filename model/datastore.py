@@ -82,7 +82,6 @@ class DataStore:
         
         #= Merge to one and remove irrelevant data =#
         self.data = pd.merge(gpsdata, passenger, how='left', on=['epoch_ts'])
-        self.data = pd.merge(wifi, self.data, how='left', on=['epoch_ts'])
 
         if debug:
             print(self.data)
@@ -98,6 +97,13 @@ class DataStore:
             if debug:
                 print(f'Setting {i_c} : {i_o} = {i_v}')
             self.data.loc[(i_c+1):(i_o-1), 'Number_of_Passengers'] = self.data['Number_of_Passengers'][i_v]
+
+
+        self.data = pd.merge(wifi, self.data, how='left', on=['epoch_ts'])
+
+        if debug:
+            print(self.data)
+            print(self.data.head(50))
 
         self.data.loc[self.data['Number_of_Passengers']<0, 'Number_of_Passengers'] = -1
         self.data['Number_of_Passengers'] = self.data['Number_of_Passengers'].fillna(-1)
