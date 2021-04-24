@@ -7,6 +7,9 @@ Vue.use( Vuex );
 
 const baseURL = 'http://localhost:10000'
 
+const baseDatetime = Date.parse("2021-04-12T09:22:22");
+const initialTime = Date.now();
+
 const state = {
     data : {},
     lastUpdate: null,
@@ -15,7 +18,17 @@ const state = {
 
 const getters = {
     all: ( state ) => state.data,
-    trip: ( trip, state ) => state.data[trip]
+    trip: ( trip, state ) => state.data[trip],
+    getRealtime: () => {  // Return current position occupancy and businfo data for every line
+
+    },
+    getHistoricalData: (line, start_time, end_time) => { // get historical data of line (filtered in timeframe), return timestamp position occupancy businfo
+        console.log(line, start_time, end_time)
+    },
+    getPredictionLine: (line, time) => { // get prediction of whole line at a specific time, return position occupancy_predict businfo
+        console.log(line)
+        { () => {} }(time)
+    }
 }
 
 function callDataAPI(commit, params) {
@@ -28,10 +41,10 @@ function callDataAPI(commit, params) {
 //to handle actions
 const actions = {
     getData( { commit } ) {
-        const endTime = new Date("2021-04-12T09:23:22");
+        const endTime = new Date( baseDatetime + Date.now() - initialTime )
         let startTime = new Date(endTime);
-        let durationInMinutes = 1;
-        startTime.setMinutes(endTime.getMinutes() - durationInMinutes);
+        let durationInSeconds = 3;
+        startTime.setSeconds(endTime.getSeconds() - durationInSeconds);
         const params = {
             start: startTime.getTime(),
             end: endTime.getTime(),
