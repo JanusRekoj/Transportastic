@@ -8,9 +8,8 @@ from model import datastore
 class Controller:
     def __init__(self) -> None:
         # Init class attributes
-        # self.model = Model() # TODO: Create / Initialize model
+        self.model = datastore.DataStore()
         self.server = WebServer(self, host='127.0.0.1', port=10000)
-        self._data = datastore.DataStore()
         self._data_lock = threading.Lock()
         self._model_thread = threading.Thread(
             target=self._run_model, daemon=True, args=(self._data_lock, ))
@@ -31,8 +30,7 @@ class Controller:
 
     def get_data(self, start_time, end_time, lineid, busid, station):
         self._data_lock.acquire()
-        #data = self._model.get_data()
-        data = "Data!!"
+        data = self.model.get(start_time, end_time, lineid, busid, station)
         self._data_lock.release()
         return data
 

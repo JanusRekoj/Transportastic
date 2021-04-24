@@ -1,5 +1,39 @@
 import pandas as pd 
 
+dummy_response_dict = {
+    'line123': {
+        'bus1': {
+            'businfo': {
+                'seats': 50,
+                'capacity': 100
+            },
+            'trajectory': [{
+                'timestamp': 10000,
+                'position': {
+                    'lat': 10.0,
+                    'lon': 10.0,
+                    'speed': 10.0,
+                    'heading': 200.0
+                },
+                'station': None,
+                'occupancy': 10
+            },
+            {
+                'timestamp': 10010,
+                'position': {
+                    'lat': 10.1,
+                    'lon': 10.1,
+                    'speed': 0.0,
+                    'heading': 100.0
+                },
+                'station': 'Hauptbahnhof',
+                'occupancy': 10
+            }]
+        }
+    }
+}
+
+
 class DataStore:
     def __init__(self, debug=False, path_root=''):
         trips = ["trip_1","trip_2","trip_3","trip_4","trip_5","trip_6","trip_7","trip_8","trip_9","trip_10","trip_11","trip_12"]
@@ -62,8 +96,8 @@ class DataStore:
         if debug:
             print(self.data.head(500))
     
-    def get(self):
-        return self.data
+    def get(self, start_time, end_time, lineid, busid, station):
+        return dummy_response_dict
 
 
 if __name__ == "__main__":
