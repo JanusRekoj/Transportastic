@@ -41,7 +41,8 @@ export default {
     });
     this.platform = platform;
     this.initializeHereMap();
-    this.timer = setInterval(this.tmp, 1000);
+    this.$store.dispatch("startAutoUpdate");
+    // this.timer = setInterval(this.tmp, 1000);
   },
   methods: {
     initializeHereMap() {
@@ -127,10 +128,10 @@ export default {
       };
 
       // axios({ method: "GET", url: "/data", {params} }).then(
-      axios.get("/data", { params }).then(
+      axios.get("/data2", { params }).then(
         (result) => {
           const data = result.data;
-          console.log("Data: ", result.data);
+          console.log("Data: ", data);
 
           // Update markers
           // Position

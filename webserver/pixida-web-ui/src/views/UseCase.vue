@@ -43,7 +43,8 @@ export default {
     Map,
   },
   created() {
-     this.timer = setInterval(this.autoUpdate, 750);
+     // this.timer = setInterval(this.autoUpdate, 750);
+     this.$store.dispatch("startAutoUpdate");
   },
   methods: {
     autoUpdate() {
@@ -58,7 +59,7 @@ export default {
        // bus: 'bus_trip_1',
        // station: 
       };
-     axios.get(serveraddress + '/data', { params }).then(
+     axios.get(serveraddress + '/data2', { params }).then(
         (result) => {
           // console.log("Data: ", result.data);
           this.configCircle.radius = result.data;
