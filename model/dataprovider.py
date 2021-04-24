@@ -1,15 +1,18 @@
 import numpy as np
-from datastore import DataStore
+from model.datastore import DataStore
 import matplotlib.pyplot as plt
 import pandas as pd
-from utils import *
+from model.utils import *
 
 class DataProvider:
 
     def __init__(self, path_root=''):
-        obj_datastore = DataStore(debug=False, path_root=path_root)
-        self.data = obj_datastore.data
-        self.wifi = obj_datastore.wifi
+        self.obj_datastore = DataStore(debug=False, path_root=path_root, fake_data=True)
+        self.data = self.obj_datastore.data
+        self.wifi = self.obj_datastore.wifi
+    
+    def get_lines(self):
+        return self.data['line'].dropna().unique()
 
     def get_workload_manual_counting(self, str_bus_trip: str, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
         df_trip = self.data[self.data['line'] == str_bus_trip]
