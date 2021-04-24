@@ -29,6 +29,7 @@ export default {
       mapInitCenter: { lat: 48.116839, lng: 11.599253 },
       mapInitZoom: 13,
       occ: 0,
+      map: null,
     };
   },
   props: {
@@ -44,8 +45,9 @@ export default {
     this.initializeHereMap();
     this.$store.dispatch("startAutoUpdate");
     // Tutorial has the following in created() {}
-    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+    this.unsubscribe = this.$store.subscribe((mutation) => {
       if (mutation.type === 'addData') {
+        this.addPolylineToMap([(48.1517826,11.5259065), (48.1717826,11.5459065)]);
         this.updateMap();
       }
     });
@@ -65,17 +67,17 @@ export default {
       var maptypes = this.platform.createDefaultLayers();
 
       // Instantiate (and display) a map object:
-      var map = new H.Map(mapContainer, maptypes.vector.normal.map, {
+      this.map = new H.Map(mapContainer, maptypes.vector.normal.map, {
         zoom: this.mapInitZoom,
         center: this.mapInitCenter,
       });
-      addEventListener("resize", () => map.getViewPort().resize());
+      addEventListener("resize", () => this.map.getViewPort().resize());
 
       // Add behavior control
-      new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+      new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map));
 
       // Add UI
-      H.ui.UI.createDefault(map, maptypes);
+      H.ui.UI.createDefault(this.map, maptypes);
 
       // Init marker icon
       this.busIcon = new H.map.Icon(this.getImgUrl("bus.png"), {
@@ -107,7 +109,7 @@ export default {
 
       // Add the marker to the map:
       for (const [bus] of Object.entries(this.markers)) {
-        map.addObject(this.markers[bus]);
+        this.map.addObject(this.markers[bus]);
       }
       //   this.markers.forEach(m => map.addObject(m))
       //   map.addObject(this.markers.bus1);
@@ -151,6 +153,19 @@ export default {
       }
 
       this.markers.bus1.setIcon(icon);
+    },
+    addPolylineToMap(points) {
+      const H = window.H;
+      var lineString = new H.geo.LineString();
+
+
+      for (const pt in points) {
+        lineString.pushPoint({lat:pt[0], lng:pt[1]}); // pt[2] is occupancy
+      }
+
+      this.map.addObject(new H.map.Polyline(
+        lineString, { style: { lineWidth: 4 }}
+      ));
     },
     getImgUrl(pic) {
       return require("../assets/" + pic);
