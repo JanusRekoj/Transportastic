@@ -53,18 +53,20 @@ class Controller:
                     'trajectory': []
                 }
             }
-            for index, data in timeframe[timeframe['line'] == l].iterrows():
-                response[l][bus_id]['trajectory'].append({
-                    'timestamp': data['epoch_ts'],
-                    'position': {
-                        'lat': data['latitude'],
-                        'lon': data['longitude'],
-                        'speed': data['speed_over_ground_knots'],
-                        'heading': data['heading_true_course'],
-                    },
-                    'station': None,
-                    'occupancy': data['Number_of_Passengers'],
-                })
+            subframe = timeframe[timeframe['line'] == l]
+            if not subframe.empty:
+                for index, data in subframe.iterrows():
+                    response[l][bus_id]['trajectory'].append({
+                        'timestamp': data['epoch_ts'],
+                        'position': {
+                            'lat': data['latitude'],
+                            'lon': data['longitude'],
+                            'speed': data['speed_over_ground_knots'],
+                            'heading': data['heading_true_course'],
+                        },
+                        'station': None,
+                        'occupancy': data['Number_of_Passengers'],
+                    })
         return response
 
 if __name__ == "__main__":
