@@ -53,8 +53,8 @@ class Controller:
                     'trajectory': []
                 }
             }
-            # timeframe = self.model.cluster_data(l, start_time, end_time)
-            timeframe = self.model.obj_datastore.data2[(self.model.obj_datastore.data2['epoch_ts'] > start_time) & (self.model.obj_datastore.data2['epoch_ts'] <= end_time)]
+            timeframe = self.model.cluster_data(l, start_time, end_time)
+            # timeframe = self.model.obj_datastore.data2[(self.model.obj_datastore.data2['epoch_ts'] > start_time) & (self.model.obj_datastore.data2['epoch_ts'] <= end_time)]
             subframe = timeframe[timeframe['line'] == l]
             if not subframe.empty:
                 for index, data in subframe.iterrows():

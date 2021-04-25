@@ -43,6 +43,7 @@ function callDataAPI(commit, params) {
 //to handle actions
 const actions = {
     getData( { commit } ) {
+        console.log("Getting data...")
         const endTime = now_time()
         let startTime = new Date(endTime);
         let durationInSeconds = 3;
@@ -63,6 +64,7 @@ const actions = {
         if (state.timer === null) {
             state.timer = setInterval( () => dispatch('getData'), 1000 );
         }
+        
     },
     stopAutoUpdate( ){
         clearInterval(state.timer);

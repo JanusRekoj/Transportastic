@@ -41,8 +41,8 @@ export default {
     this.initializeHereMap();
     this.$store.dispatch("startAutoUpdate");
     // Tutorial has the following in created() {}
-    this.unsubscribe = this.$store.subscribe((mutation) => {
-      console.log("LogLogLog!");
+    this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      // console.log("LogLogLog!");
       if (mutation.type === "addData") {
         this.addPolylineToMap([
           [48.1517826, 11.5259065, 100],
@@ -105,21 +105,24 @@ export default {
       this.map.addObject(marker);
     },
     updateMap() {
-      console.log("LogLogLog!");
       // Get data
       const data = this.$store.state.data;
-      console.log("Data: ", data);
 
       // For all lines
       for (let line in data) {
         let lineObj = data[line];
-        // console.log(lineObj);
         // For all busses
         for (let bus in lineObj) {
           let busObj = lineObj[bus];
-          console.log("Data: ", busObj);
-          let pos =
-            busObj["trajectory"][busObj["trajectory"].length - 1]["position"];
+          console.log("Bus object: ", busObj);
+          let numTrajectory = busObj["trajectory"].length
+          if (numTrajectory < 1) {
+            console.log("Error: No trajectories in trajectory: ", busObj["trajectory"])
+            continue
+          } else {
+            console.log("Success!! Trajectory has ", numTrajectory, " positions");
+          }
+          let pos = busObj["trajectory"][numTrajectory - 1]["position"];
           let gpsPos = { lat: pos.lat, lng: pos.lon };
           let occupancy = busObj["trajectory"]["occupancy"];
           let capacity = busObj["businfo"]["capacity"];
