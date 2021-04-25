@@ -34,20 +34,25 @@ export default {
   },
   computed: {
     transport() {
-      return "../assets/journey_occ_low.svg";
+      return this.getImgUrl("journey_occ_low.svg");
     },
     occupancy() {
       if (this.data.occupancy > 0.75) {
-        return "../assets/journey_occ_high.svg";
+        return this.getImgUrl("journey_occ_high.svg");
       } else if (this.data.occupancy > 0.5) {
-        return "../assets/journey_occ_medium.svg";
+        return this.getImgUrl("journey_occ_medium.svg");
       } else {
-        return "../assets/journey_occ_low.svg";
+        return this.getImgUrl("journey_occ_low.svg");
       }
     },
   },
   data() {
     return {};
+  },
+  methods: {
+    getImgUrl(pic) {
+      return require("../assets/" + pic);
+    },
   },
 };
 </script>
