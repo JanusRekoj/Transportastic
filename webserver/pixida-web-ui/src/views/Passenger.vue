@@ -53,8 +53,8 @@ export default {
           data: {
             startTime: "7:30",
             endTime: "7:55",
-            transport: "bus53",
-            occupancy: "100",
+            transport: "bus_53",
+            occupancy: 1,
             benefit: "+0km",
           },
         },
@@ -64,8 +64,8 @@ export default {
           data: {
             startTime: "7:40",
             endTime: "8:00",
-            transport: "tram20",
-            occupancy: "75",
+            transport: "tram_20",
+            occupancy: 0.75,
             benefit: "+1.67km",
           },
         },
@@ -75,8 +75,8 @@ export default {
           data: {
             startTime: "8:00",
             endTime: "8:30",
-            transport: "bus56",
-            occupancy: "30",
+            transport: "bus_56",
+            occupancy: 0.3,
             benefit: "+4.67km",
           },
         },

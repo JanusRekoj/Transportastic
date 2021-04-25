@@ -34,7 +34,15 @@ export default {
   },
   computed: {
     transport() {
-      return this.getImgUrl("journey_occ_low.svg");
+      if (this.data.transport == "bus_53") {
+        return this.getImgUrl("bus_53.svg");
+      } else if (this.data.transport == "tram_20") {
+        return this.getImgUrl("tram_20.svg");
+      } else if (this.data.transport == "bus_56") {
+        return this.getImgUrl("bus_56.svg");
+      } else {
+        return this.getImgUrl("bus.svg");
+      }
     },
     occupancy() {
       if (this.data.occupancy > 0.75) {

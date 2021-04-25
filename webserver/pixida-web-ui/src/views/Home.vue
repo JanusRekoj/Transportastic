@@ -1,11 +1,11 @@
 <template>
   <div class="home">
-      <b-img
-        src="../assets/transportastic-logo.svg"
-        class="m-5"
-        fluid
-        alt="Transportastic. Mobility. Redefined."
-      />
+    <b-img
+      src="../assets/transportastic_title.svg"
+      class="m-5"
+      fluid
+      alt="Transportastic. Mobility. Redefined."
+    />
     <!-- <b-jumbotron>
       <h1 class="display-2">Welcome to Pixida Team 2</h1>
       <h1>Some lousy team slogan would be nice here...</h1>
