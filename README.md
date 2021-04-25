@@ -36,6 +36,13 @@ Moreover, historic occupancy data can be viewed for any bus line and **predictio
 By introducing a **reward based system**, we intent to incentivize passengers to use less occupied means of transportation in order to reduce the load on the main transportation systems. The reward comes in the form of **bonus kilometers** depending on the occupancy during the trip - "*the lower the occupancy, the higher the reward*". These bonus kilometers **can be used to get free trips** in the future.
 To provide this information to the customer, we add information regarding occupancy and expected reward to the common information of a trip search.
 
+Example images from the webpage are shown in the following:
+![Homepage](/images/home.png)
+![Homepage](/images/overview_dashboard.png)
+![Homepage](/images/passenger_view.png)
+![Homepage](/images/team.png)
+
+
 ## How we built it
 The progam design satisfies the **Model-View-Control (MVC)** architecture. On a flask server, WiFi probe requests are stored and analyszed by our algorithms. Through a controller and under the use of HTTP-Requests, the data is transferred threadedly to the client in JSON packages. The client - a single-page-webapplication - is built on the Javascript-Framework **vue.js** and extended by the **bootstrap** CSS-Framework.
 
