@@ -46,7 +46,7 @@ function callDataAPI(commit, params) {
 const actions = {
     getData( { commit } ) {
         console.log("Getting data...")
-        const endTime = now_time()
+        const endTime = new Date(Date.now()+3000)
         let startTime = new Date(endTime);
         let durationInSeconds = 3;
         startTime.setSeconds(endTime.getSeconds() - durationInSeconds);
