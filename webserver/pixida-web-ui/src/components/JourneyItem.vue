@@ -13,7 +13,7 @@
       <div class="col-auto ml-auto text-right pr-4">
         <b-img :src="this.occupancy" height="25" />
       </div>
-      <div class="col-auto text-right">
+      <div class="col-4 text-right" style="color: green">
         <div class="">
           <strong>{{ this.data.benefit }}</strong>
         </div>
