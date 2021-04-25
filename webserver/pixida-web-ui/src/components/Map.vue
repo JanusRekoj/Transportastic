@@ -43,6 +43,7 @@ export default {
     this.$store.dispatch("startAutoUpdate");
     // Tutorial has the following in created() {}
     this.unsubscribe = this.$store.subscribe((mutation) => {
+      console.log("LogLogLog!");
       if (mutation.type === "addData") {
         this.addPolylineToMap([
           [48.1517826, 11.5259065, 100],
