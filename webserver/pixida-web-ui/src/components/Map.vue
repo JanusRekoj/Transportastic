@@ -79,19 +79,19 @@ export default {
       H.ui.UI.createDefault(this.map, maptypes);
 
       // Init marker icon
-      this.busIcon = new H.map.Icon(this.getImgUrl("bus.png"), {
+      this.busIcon = new H.map.Icon(this.getImgUrl("bus.svg"), {
         size: { w: 40, h: 48 },
       });
 
-      this.busLowIcon = new H.map.Icon(this.getImgUrl("bus_low.png"), {
+      this.busLowIcon = new H.map.Icon(this.getImgUrl("bus_low.svg"), {
         size: { w: 40, h: 48 },
       });
 
-      this.busMediumIcon = new H.map.Icon(this.getImgUrl("bus_medium.png"), {
+      this.busMediumIcon = new H.map.Icon(this.getImgUrl("bus_medium.svg"), {
         size: { w: 40, h: 48 },
       });
 
-      this.busHighIcon = new H.map.Icon(this.getImgUrl("bus_high.png"), {
+      this.busHighIcon = new H.map.Icon(this.getImgUrl("bus_high.svg"), {
         size: { w: 40, h: 48 },
       });
     },
