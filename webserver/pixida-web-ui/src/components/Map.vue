@@ -104,6 +104,7 @@ export default {
       this.map.addObject(marker);
     },
     updateMap() {
+      console.log("LogLogLog!");
       // Get data
       const data = this.$store.state.data;
       console.log("Data: ", data);
@@ -115,7 +116,7 @@ export default {
         // For all busses
         for (let bus in lineObj) {
           let busObj = lineObj[bus];
-          console.log(busObj);
+          console.log("Data: ", busObj);
           let pos =
             busObj["trajectory"][busObj["trajectory"].length - 1]["position"];
           let gpsPos = { lat: pos.lat, lng: pos.lon };
