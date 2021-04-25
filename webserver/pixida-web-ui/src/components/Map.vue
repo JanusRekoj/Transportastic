@@ -94,22 +94,6 @@ export default {
       this.busHighIcon = new H.map.Icon(this.getImgUrl("bus_high.png"), {
         size: { w: 40, h: 48 },
       });
-
-      //   // Create all markers
-      //   this.markers.bus1 = new H.map.Marker(this.mapInitCenter, {
-      //     icon: this.busLowIcon,
-      //   });
-      //   this.markers.bus2 = new H.map.Marker(this.mapInitCenter, {
-      //     icon: this.busMediumIcon,
-      //   });
-      //   this.markers.bus3 = new H.map.Marker(this.mapInitCenter, {
-      //     icon: this.busHighIcon,
-      //   });
-
-      //   // Add the marker to the map:
-      //   for (const [bus] of Object.entries(this.markers)) {
-      //     map.addObject(this.markers[bus]);
-      //   }
     },
     addMarker(bus, pos) {
       const H = window.H;
@@ -122,7 +106,7 @@ export default {
     updateMap() {
       // Get data
       const data = this.$store.state.data;
-      // console.log("Data: ", data);
+      console.log("Data: ", data);
 
       // For all lines
       for (let line in data) {
@@ -131,7 +115,7 @@ export default {
         // For all busses
         for (let bus in lineObj) {
           let busObj = lineObj[bus];
-          // console.log(busObj);
+          console.log(busObj);
           let pos =
             busObj["trajectory"][busObj["trajectory"].length - 1]["position"];
           let gpsPos = { lat: pos.lat, lng: pos.lon };
