@@ -21,18 +21,19 @@ cd ../..
 
 4. Start application with controller.py with python3.7
 
+
 *Backup of Devpost Readme*
 ## Inspiration
 Public transportation providers in many cities are facing increasing problems with the **peak usage** of their services **during the rush hours** which will only increase in the future due to urbanization.
-This is not only a problem for the providers but also for the millions of people using these services. This is especially true during the current pandemic where it can be life threatning to use overcrowded means of transportation.
+This is not only a problem for the providers but also for the millions of people using these services. This is especially true during the current pandemic where it can be life threatening to use overcrowded means of transportation.
 Consequently, **our goal is to flatten the curve around the rush hour usage peaks** which can also help to flatten the curve in the pandemic.
 
 ## What it does
-We use **WiFi probe requests** to analyze the **occupancy of transportation** services.
+We are using **WiFi probe requests** to analyze the **occupancy of transportation** services.
 Based on this data, we provide services to both the provider and the customer.
-The provider can view the occupancy in **real-time in a web dashboard** and use this data to react quickly to unexpected growth of passengers, e.g. by sending additional buses.
-Moreover, historic occupancy data can be viewed for any line and **predictions generated with machine learning** are provided to improve the route planning.
-By introducing a **reward based system**, we give the passenger an incentive to use less occupied means of transportation in order to reduce the load on the main transportation systems. The reward comes in form of **bonus kilometers** depending on the occupancy during the trip - "*the lower the occupancy, the higher the reward*". These bonus kilometers **can be used to get free trips** in the future.
+The provider can view the occupancy in **real-time in a web dashboard** and use this data to react quickly to the unexpected growth of passengers, e.g. by sending additional buses.
+Moreover, historic occupancy data can be viewed for any bus line and **predictions generated with machine learning** are provided to improve the route planning.
+By introducing a **reward based system**, we intent to incentivize passengers to use less occupied means of transportation in order to reduce the load on the main transportation systems. The reward comes in the form of **bonus kilometers** depending on the occupancy during the trip - "*the lower the occupancy, the higher the reward*". These bonus kilometers **can be used to get free trips** in the future.
 To provide this information to the customer, we add information regarding occupancy and expected reward to the common information of a trip search.
 
 ## How we built it
@@ -44,25 +45,25 @@ To count the number of people inside a mean of transportation, the following alg
 - 1: Identify a bus station
 - 2: Count number of MAC adresses for each subsequent station
 - 3: compare MAC adresses between subsequent stations and identify those present at both stations
-Mean Abs Error:
+The above-mentioned algorithm was evalueatd based on Mean Absolute Error(MAE) metric and the algorithm achieved MAE score of 4.8
 
 
 To predict the passenger load for next 24h, we adapted an idea from [this paper](http://statweb.stanford.edu/~tibs/lasso/lasso.pdf)
 - Input: GPS position, speed, heading, timestamp
 - Model: choose between Random Forrest, Support Vector Regression (SVR) and Linear Regression with L2 regularization (LASSO)
 
-(best one: Random forrest (mean abs error of five))
+Random Forest was the best performing algorithm with the MAE score of 5.7
 
 
 In the sitemap a homepage, an about us and two distinct use case demo-pages exist. On the one hand, the **Company Page** visualizes real-time bus positions and their respective occupancies. Users can interact with the busses in order to get more detailed trip information from a heatmap widget. On the other hand, the **Passenger Page** contains a simple trip planner, where users can get propositions based on their origin, destination, time and personal preference (fast or rewarding). The solutions are fetched from the **MVG-API** and displayed in a list view widget. 
 
-For the **backend** we use **Python 3.7** to analyze the WiFi probe request data and to predict future occupancy with machine learning. The algorithms for these tasks were adapted from research papers providing the state of the art.
+For the **backend** we use **Python 3.7** to analyze the WiFi probe request data and to predict future occupancy with machine learning. The algorithms for these tasks were adapted from research papers providing the state of the art results.
 
 **Frontend**
 **Interface**
 
 ## Challenges we ran into
-Due to the widely used randomization of MAC adresses which are captured by the WiFi sniffer it is difficult to provide accurate numbers of the passenger count. Another challenge is to identify when a bus is at a station. We have the speed and GPS position of the bus but it is not possible to detected wheter the bus stops at a red light, in a traffic jam or is at a station. This could be solved by providing the GPS position of all stations.
+Due to the widely used randomization of MAC addresses that are captured by the WiFi sniffer, it is difficult to provide accurate numbers of the passenger count. Another challenge was to identify when a bus is at a station. We have the speed and GPS position of the bus but it is not possible to detect whether the bus stops at a red light, in a traffic jam, or it is at a station. This could be solved by providing the GPS position of all stations.
 Regarding the web page development, it was difficult to use a fully functional map underlay to show where the busses drive. This was due to the fact that the most used and documented tool which is GoogleMaps was recently moved behind a paywall.
 In general it was difficult to find a good balance between using already implemented code snippets and implementing new code.
 
@@ -77,4 +78,4 @@ Regarding the realization we learned how to set up a good interface between our 
 Additionally, we learned about the usage of MAC addresses to count passenger data and that it is key to not only generate the algorithms but to also integrate these algorithms in use cases in order to show the need for this product. 
 
 ## What's next for Transportastic
-We worked together on a GitHub repository and made it visible to anyone. With this we ensure that not only our idea can be shared and further researched but that with the power of open source we can truly redefine mobility. 
+We worked together on a GitHub repository and made it publicly available. With this, we ensure that not only our idea can be shared and further researched but that with the power of the open source community we can truly redefine mobility. 
