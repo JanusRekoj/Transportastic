@@ -11,11 +11,7 @@
         height="60"
       ></b-img>
       <p class="col mx-auto my-auto p-1">
-        {{
-          this.data.trajectory[this.data.trajectory.length - 1].occupancy +
-          "/" +
-          this.data.businfo.capacity
-        }}
+        {{ this.occupancy + "/" + this.data.businfo.capacity }}
       </p>
     </div>
   </div>
@@ -34,9 +30,7 @@ export default {
   computed: {
     image() {
       // Compute relative occupancy
-      let ratio =
-        this.data.trajectory[this.data.trajectory.length - 1].occupancy /
-        this.data.businfo.capacity;
+      let ratio = this.occupancy / this.data.businfo.capacity;
 
       // Choose image based on current occupancy
       if (ratio > 0.9) {
@@ -54,6 +48,11 @@ export default {
       } else {
         return this.getImgUrl("bus_occ.png");
       }
+    },
+    occupancy() {
+      if (this.data.trajectory[this.data.trajectory.length - 1])
+        return this.data.trajectory[this.data.trajectory.length - 1].occupancy;
+      else return -1;
     },
   },
   data() {

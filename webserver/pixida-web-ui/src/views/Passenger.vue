@@ -55,7 +55,7 @@ export default {
             endTime: "7:55",
             transport: "bus_53",
             occupancy: 1,
-            benefit: "+0km",
+            benefit: "Bonus: +0km",
           },
         },
         {
@@ -66,7 +66,7 @@ export default {
             endTime: "8:00",
             transport: "tram_20",
             occupancy: 0.75,
-            benefit: "+1.67km",
+            benefit: "Bonus: +1.67km",
           },
         },
         {
@@ -77,7 +77,7 @@ export default {
             endTime: "8:30",
             transport: "bus_56",
             occupancy: 0.3,
-            benefit: "+4.67km",
+            benefit: "Bonus: +4.67km",
           },
         },
       ],
