@@ -37,9 +37,13 @@ By introducing a **reward based system**, we intent to incentivize passengers to
 To provide this information to the customer, we add information regarding occupancy and expected reward to the common information of a trip search.
 
 Example images from the webpage are shown in the following:
+# Homepage:
 ![Homepage](/images/home.png)
+# Provider view:
 ![Homepage](/images/overview_dashboard.png)
+# Passenger view:
 ![Homepage](/images/passenger_view.png)
+# Teamoverview:
 ![Homepage](/images/team.png)
 
 
