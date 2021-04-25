@@ -22,18 +22,18 @@ export default {
   data() {
     return {
       series: {
-        trip_1: [0, 0.1, 0.2, 0.4],
-        trip_2: [0, 0.1, 0.2, 0.4],
-        trip_3: [0, 0.1, 0.2, 0.4],
-        trip_4: [0, 0.1, 0.2, 0.4],
-        trip_5: [0, 0.1, 0.2, 0.4],
-        trip_6: [0, 0.1, 0.2, 0.4],
-        trip_7: [0, 0.1, 0.2, 0.4],
-        trip_8: [0, 0.1, 0.2, 0.4],
-        trip_9: [0, 0.1, 0.2, 0.4],
-        trip_10: [0, 0.1, 0.2, 0.4],
-        trip_11: [0, 0.1, 0.2, 0.4],
-        trip_12: [0, 0.1, 0.2, 0.4],
+        Line1: [0, 0.1, 0.2, 0.4],
+        Line2: [0, 0.1, 0.2, 0.4],
+        Line3: [0, 0.1, 0.2, 0.4],
+        Line4: [0, 0.1, 0.2, 0.4],
+        Line5: [0, 0.1, 0.2, 0.4],
+        Line6: [0, 0.1, 0.2, 0.4],
+        Line7: [0, 0.1, 0.2, 0.4],
+        Line8: [0, 0.1, 0.2, 0.4],
+        Line9: [0, 0.1, 0.2, 0.4],
+        Line10: [0, 0.1, 0.2, 0.4],
+        Line11: [0, 0.1, 0.2, 0.4],
+        Line12: [0, 0.1, 0.2, 0.4],
       },
       chartOptions: {
         chart: {
@@ -42,6 +42,7 @@ export default {
           foreColor: "#FFFFFF",
         },
         xaxis: {
+          label: "Time of day",
           categories: [
             0,
             1,
@@ -75,7 +76,7 @@ export default {
         },
         // colors: ["#008FFB"],
         title: {
-          text: "HeatMap Chart (Single color)",
+          text: "Occupancy over the day",
         },
         plotOptions: {
           heatmap: {
@@ -85,19 +86,19 @@ export default {
                   from: 0.75,
                   to: 1.0,
                   color: "#aa0000",
-                  name: "high",
+                  name: "High Occupancy",
                 },
                 {
                   from: 0.5,
                   to: 0.75,
                   color: "#aaaa00",
-                  name: "medium",
+                  name: "Medium Occupancy",
                 },
                 {
                   from: 0.0,
                   to: 0.5,
                   color: "#00aa00",
-                  name: "low",
+                  name: "Low Occupancy",
                 },
               ],
             },
