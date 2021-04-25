@@ -3,6 +3,8 @@ from model.datastore import DataStore
 import matplotlib.pyplot as plt
 import pandas as pd
 from model.utils import *
+from operator import add
+import itertools
 
 class DataProvider:
 
