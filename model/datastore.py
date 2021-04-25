@@ -23,6 +23,7 @@ class DataStore:
                 self.time_adjustment = df1['epoch_ts'].min() - df1['epoch_ts'].min()  # TODO nicer
             else:
                 self.time_adjustment = common_timestamp - df1['epoch_ts'].min()
+            df1['epoch_ts'] = df1['epoch_ts'] + self.time_adjustment
             df1l.append(df1)
             if fake_data:
                 df1lf.append(df1)
