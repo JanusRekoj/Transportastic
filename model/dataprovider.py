@@ -1,15 +1,18 @@
 import numpy as np
-from datastore import DataStore
+from model.datastore import DataStore
 import matplotlib.pyplot as plt
 import pandas as pd
-from utils import *
+from model.utils import *
 
 class DataProvider:
 
     def __init__(self, path_root=''):
-        obj_datastore = DataStore(debug=False, path_root=path_root)
-        self.data = obj_datastore.data
-        self.wifi = obj_datastore.wifi
+        self.obj_datastore = DataStore(debug=False, path_root=path_root, fake_data=True)
+        self.data = self.obj_datastore.data
+        self.wifi = self.obj_datastore.wifi
+    
+    def get_lines(self):
+        return self.data['line'].dropna().unique()
 
     def get_workload_manual_counting(self, str_bus_trip: str, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
         df_trip = self.data[self.data['line'] == str_bus_trip]
@@ -35,11 +38,13 @@ class DataProvider:
                 real_workload[counter] = curr_workload
         return df[['epoch_ts', 'Number_of_Passengers']]
 
-    def cluster_data(self, df_timeintverval):
+    def cluster_data(self, str_bus_trip: str, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+        df_trip = self.data[self.data['line'] == str_bus_trip]
+        df_time_intverval = df_trip[(df_trip['epoch_ts']>start_time) & (df_trip['epoch_ts']<end_time)]
         num_station = 1
         num_ride = 1
       
-        df_phase_transition = df_timeintverval['Number_of_Passengers'].diff()
+        df_phase_transition = df_time_intverval['Number_of_Passengers'].diff()
         list_indices_phase_transition = df_phase_transition[df_phase_transition != 0].index 
         list_indices_phase_transition = list_indices_phase_transition - list_indices_phase_transition[0]
         cluster_indices = list(zip(list_indices_phase_transition[:-1], list_indices_phase_transition[1:]))
@@ -47,7 +52,7 @@ class DataProvider:
         dict_rides = {}
         dict_stations = {}
         for indices in cluster_indices:
-            phase = df_timeintverval.iloc[indices[0] : indices[1]]
+            phase = df_time_intverval.iloc[indices[0] : indices[1]]
             if phase.iloc[0].Number_of_Passengers < 0:
                 dict_stations[f'station_{num_station}'] = phase
                 num_station += 1
@@ -56,17 +61,15 @@ class DataProvider:
                 num_ride += 1
         return dict_stations, dict_rides
 
-    def get_oocupancy_wifi_data_third_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
-        df_trip = self.data[self.data['line'] == str_bus_trip]
-        df_trip_timeslot = df_trip[(df_trip['epoch_ts']>start_time) & (df_trip['epoch_ts']<end_time)]
-        dict_stations, dict_rides = self.cluster_data(df_trip_timeslot.iloc[2:])
+    def get_occupancy_wifi_data_third_approach(self, str_bus_trip: str, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+        dict_stations, dict_rides = self.cluster_data(str_bus_trip, start_time, end_time)
 
         #First test with rides only
         for ride in dict_rides:
             df_ride = dict_rides[ride]
             mac_addresses = df_ride.mac_address.unique()
 
-    def get_oocupancy_wifi_data_second_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+    def get_occupancy_wifi_data_second_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
         df_trip = self.data[self.data['line'] == str_bus_trip]
         df_trip_timeslot = df_trip[(df_trip['epoch_ts']>start_time) & (df_trip['epoch_ts']<end_time)]
 
@@ -101,30 +104,12 @@ class DataProvider:
 
         real_world_data = self.get_real_world_data(df_trip_timeslot)
 
-        fig = plt.figure()
-        plt.plot(real_world_data['Number_of_Passengers'].values)
-        plt.xlabel('Time')
-        plt.ylabel('Passenger count')
-        #plt.title(f'Passenger count for {str_bus_trip} from {start_time.strftime('%Y.%m.%d %H:%M%s')} to {end_time.strftime('%Y.%m.%d %H:%M%s')}')
-        fig.savefig('passenger_count_real')
 
-        fig = plt.figure()
-        plt.plot(counting_array)
-        plt.xlabel('Time')
-        plt.ylabel('Passenger count')
-        #plt.title(f'Passenger count for {str_bus_trip} from {start_time.strftime('%Y.%m.%d %H:%M%s')} to {end_time.strftime('%Y.%m.%d %H:%M%s')}')
-        fig.savefig('passenger_count')
+        return dict_mac_addresses, counting_array
 
-        workload = counting_array/np.max(counting_array)
-        fig = plt.figure()
-        plt.plot(workload)
-        plt.xlabel('Time')
-        plt.ylabel('occupancy')
-        #plt.title(f'Passenger count for {str_bus_trip} from {start_time.strftime('%Y.%m.%d %H:%M%s')} to {end_time.strftime('%Y.%m.%d %H:%M%s')}')
-        fig.savefig('occupancy')
-
-        return dict_mac_addresses
-
+    def get_occupancy_wifi_data_first_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
+        #@Nika pls add your code here :D
+        pass
         
 
             
