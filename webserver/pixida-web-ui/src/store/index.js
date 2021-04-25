@@ -8,9 +8,11 @@ Vue.use( Vuex );
 const baseURL = 'http://localhost:10000'
 
 // For dummy time simulation
-const baseDatetime = Date.parse("2021-04-12T09:22:22");
-const initialTime = Date.now();
-const now_time = () => new Date( baseDatetime + Date.now() - initialTime )
+// const baseDatetime = Date.parse("2021-04-12T09:22:22");
+// const initialTime = Date.now();
+// const now_time = () => new Date( baseDatetime + Date.now() - initialTime )
+const now_time = () => new Date(Date.now())
+
 
 const state = {
     data : {},
@@ -51,7 +53,6 @@ const actions = {
         const params = {
             start: startTime.getTime(),
             end: endTime.getTime(),
-            // line: "trip_1",
         };
         callDataAPI(commit, params);
         commit('changeLastUpdateState', endTime)
@@ -64,7 +65,7 @@ const actions = {
         if (state.timer === null) {
             state.timer = setInterval( () => dispatch('getData'), 1000 );
         }
-        
+
     },
     stopAutoUpdate( ){
         clearInterval(state.timer);

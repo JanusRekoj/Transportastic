@@ -24,7 +24,7 @@ class DataStore:
             else:
                 self.time_adjustment = common_timestamp - df1['epoch_ts'].min()
             df1['epoch_ts'] = df1['epoch_ts'] + self.time_adjustment
-            df1l.append(df1)
+            df1l.append(df1.copy(deep=True))
             if fake_data:
                 df1lf.append(df1)
                 starting_time = df1['epoch_ts'].min()
@@ -39,6 +39,7 @@ class DataStore:
             df2['epoch_ts'] = pd.to_datetime(df2['Epoch_Time'].astype(float).round().astype(int), unit = 's')
             df2 = df2.drop('Epoch_Time', 1)
             df2['epoch_ts'] = df2['epoch_ts'] + self.time_adjustment
+            df2['line'] = trip
             with open(os.path.join(path_root, 'data', trip, 'passenger_count_nums'), 'r') as f:
                 line = f.readlines()[1]
                 df2_time.append(line)
@@ -55,17 +56,18 @@ class DataStore:
                     df2_cp['epoch_ts'] = df2_cp['epoch_ts'] + i*delta
                     df2lf.append(df2_cp)
 
-            df3 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'wifi_data.csv'), ';'))
+            df3 = pd.read_csv(os.path.join(path_root, 'data', trip, 'wifi_data.csv'), ';')
             df3['epoch_ts'] = pd.to_datetime(df3['epoch_ts'].astype(float).round().astype(int), unit = 's')
             df3 = df3.drop('arr_ts', 1)
             df3['epoch_ts'] = df3['epoch_ts'] + self.time_adjustment
+            df3['line'] = trip
             df3l.append(df3)
             
         
         #= Merge each dataframe =#
-        gpsdata   = pd.concat(df1l)
-        passenger = pd.concat(df2l)
-        wifi      = pd.concat(df3l)
+        gpsdata   = pd.concat(df1l,ignore_index=True)
+        passenger = pd.concat(df2l,ignore_index=True)
+        wifi      = pd.concat(df3l,ignore_index=True)
         
         if debug:
             print(gpsdata)
@@ -73,7 +75,7 @@ class DataStore:
             print(wifi)
         
         #= Merge to one and remove irrelevant data =#
-        self._data = pd.merge(gpsdata, passenger, how='left', on=['epoch_ts'])
+        self._data = pd.merge(gpsdata, passenger, how='left', on=['epoch_ts','line'])
 
         if debug:
             print(self._data)
@@ -92,9 +94,11 @@ class DataStore:
 
         self.data = self._data.copy()
         self.data['epoch_ts'] = pd.to_datetime(self.data['epoch_ts'], unit = 's')
-        self.data = self.data.drop_duplicates(subset='epoch_ts')
+        self.data = self.data.drop_duplicates(subset=['epoch_ts','line'])
         wifi['epoch_ts'] = pd.to_datetime(wifi['epoch_ts'], unit = 's')
-        self.data = self.data.merge(wifi, how='left', left_on='epoch_ts', right_on='epoch_ts')
+        self.data = self.data.merge(wifi, how='left', on=['epoch_ts','line'])
+
+        # Maybe add trip names to gps passenger and wifi data and use at merge
 
         if debug:
             print(self.data)
