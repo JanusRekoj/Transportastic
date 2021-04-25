@@ -3,11 +3,13 @@ from model.datastore import DataStore
 import matplotlib.pyplot as plt
 import pandas as pd
 from model.utils import *
+from operator import add
+import itertools
 
 class DataProvider:
 
     def __init__(self, path_root=''):
-        self.obj_datastore = DataStore(debug=False, path_root=path_root, fake_data=True)
+        self.obj_datastore = DataStore(debug=False, path_root=path_root, fake_data=False)
         self.data = self.obj_datastore.data
         self.wifi = self.obj_datastore.wifi
     
@@ -63,11 +65,41 @@ class DataProvider:
 
     def get_occupancy_wifi_data_third_approach(self, str_bus_trip: str, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
         dict_stations, dict_rides = self.cluster_data(str_bus_trip, start_time, end_time)
+        mac_addresses_per_ride = list(map(lambda x: dict_rides[x].mac_address.unique(), dict_rides))
+        mac_addresses_per_station = list(map(lambda x: dict_stations[x].mac_address.unique(), dict_stations))
+        
+        manual_counted_passengers_per_ride = list(map(lambda x: dict_rides[x].Number_of_Passengers.values[0], dict_rides))
 
-        #First test with rides only
-        for ride in dict_rides:
-            df_ride = dict_rides[ride]
-            mac_addresses = df_ride.mac_address.unique()
+        combined_addresses = list(zip(mac_addresses_per_ride[:-1], mac_addresses_per_ride[1:]))
+        combine_station_before_and_rides = list(zip(mac_addresses_per_ride, mac_addresses_per_station))
+        combine_station_after_and_rides = list(zip(mac_addresses_per_ride[:-1], mac_addresses_per_station[1:]))
+        #Not valid for first ride!!!
+        passengers_per_ride_ride_compared = [0] + list(map(lambda x: len(list(set(list(x[0])).intersection(list(x[1])))), combined_addresses))
+        passengers_per_ride_compare_station_before = list(map(lambda x: len(list(set(list(x[0])).intersection(list(x[1])))), combine_station_before_and_rides))
+        passengers_per_ride_compare_station_after = list(map(lambda x: len(list(set(list(x[0])).intersection(list(x[1])))), combine_station_after_and_rides)) + [0]
+
+        passengers_per_ride = list(map(add, map(add, passengers_per_ride_ride_compared, passengers_per_ride_compare_station_before), passengers_per_ride_compare_station_after))
+
+        seconds_per_ride = list(map(lambda x: np.sum(np.diff(dict_rides[x]['epoch_ts'].values[[0, -1]]).astype('timedelta64[s]')).astype('int'), dict_rides))
+        seconds_per_station = list(map(lambda x: np.sum(np.diff(dict_stations[x]['epoch_ts'].values[[0, -1]]).astype('timedelta64[s]')).astype('int'), dict_stations))
+        list_seconds = []
+        sum_list = [list_seconds  + [a[1] + a[0]] for a in zip(seconds_per_ride, seconds_per_station[1:] + [0])]
+        seconds = list(itertools.chain(*sum_list))
+
+        curve_counted_values = np.zeros(np.sum(seconds))
+        curve_measured_values = np.zeros(np.sum(seconds))
+
+        for counter, step in enumerate(seconds):
+            curve_counted_values[int(seconds[counter - 1]) : int(step)] = passengers_per_ride[counter]
+            curve_measured_values[int(seconds[counter - 1]) : int(step)] = manual_counted_passengers_per_ride [counter]
+
+        fig = plt.figure()
+        plt.plot(curve_counted_values, color='r')
+        plt.plot(curve_measured_values, color='b')
+        plt.xlabel('Time')
+        plt.ylabel('Passenger count')
+        #plt.title(f'Passenger count for {str_bus_trip} from {start_time.strftime('%Y.%m.%d %H:%M%s')} to {end_time.strftime('%Y.%m.%d %H:%M%s')}')
+        fig.savefig('passenger_count')
 
     def get_occupancy_wifi_data_second_approach(self, str_bus_trip: str, df_stations, start_time=np.datetime64('1900-01-01T00:00:00+00'), end_time=np.datetime64('2100-12-31T23:59:59')):
         df_trip = self.data[self.data['line'] == str_bus_trip]
