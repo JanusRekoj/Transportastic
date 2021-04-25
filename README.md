@@ -1,6 +1,25 @@
 # Transportastic
 ###### TUM Junge Akademie Science Hack 2021
 
+# Workflow
+How to use:
+
+1. Clone repository
+
+2. Check if data contains bus trips
+
+3. Install requirements
+
+```
+#Open cmd
+pip install -r requirements.txt
+cd ../webserver/pixida-web-ui
+Npm install
+Npm run build
+cd ../..
+```
+
+4. Start application with controller.py with python3.7
 
 *Backup of Devpost Readme*
 ## Inspiration
