@@ -26,6 +26,7 @@ export default {
       markers: [],
       mapInitCenter: { lat: 48.116839, lng: 11.599253 },
       mapInitZoom: 14,
+      searchView: true,
     };
   },
   props: {
@@ -51,6 +52,68 @@ export default {
         this.updateMap();
       }
     });
+
+    if (this.searchView) {
+      // Add markers
+      const H = window.H;
+      let markerA = new H.map.Marker({ lat: 48.095882, lng: 11.563641 });
+      let markerB = new H.map.Marker({ lat: 48.119566, lng: 11.600229 });
+      this.map.addObject(markerA);
+      this.map.addObject(markerB);
+
+      // Center map view
+      this.map.setCenter({ lat: 48.107548, lng: 11.584053 });
+      this.map.setZoom(14);
+
+      // Show three routes
+      let pointsA = [
+        [48.095882, 11.563641, 100],
+        [48.09546, 11.566023, 100],
+        [48.09336, 11.569993, 100],
+        [48.099636, 11.585166, 100],
+        [48.102831, 11.597429, 100],
+        [48.104526, 11.605188, 100],
+        [48.106741, 11.604205, 100],
+        [48.110574, 11.603635, 100],
+        [48.115846, 11.602101, 100],
+        [48.119566, 11.600229, 100],
+      ];
+
+      let pointsB = [
+        [48.095882, 11.563641, 100],
+        [48.098035, 11.564164, 100],
+        [48.104657, 11.569804, 100],
+        [48.108628, 11.574054, 100],
+        [48.111631, 11.576003, 100],
+        [48.118025, 11.577111, 100],
+        [48.119561, 11.582165, 100],
+        [48.117055, 11.589803, 100],
+        [48.11959, 11.599958, 100],
+        [48.119566, 11.600229, 100],
+      ];
+
+      let pointsC = [
+        [48.095882, 11.563641, 100],
+        [48.09546, 11.566023, 100],
+        [48.09336, 11.569993, 100],
+        [48.098487, 11.581899, 100],
+        [48.103141, 11.582313, 100],
+        [48.104337, 11.581541, 100],
+        [48.104724, 11.583515, 100],
+        [48.104801, 11.589091, 100],
+        [48.105942, 11.593117, 100],
+        [48.106782, 11.596297, 100],
+        [48.110824, 11.594497, 100],
+        [48.11222, 11.593143, 100],
+        [48.114935, 11.592338, 100],
+        [48.117087, 11.590004, 100],
+        [48.119566, 11.600229, 100],
+      ];
+
+      this.addPolylineToMap(pointsA, "#FF0000");
+      this.addPolylineToMap(pointsB, "#00FF00");
+      this.addPolylineToMap(pointsC, "#FFFF00");
+    }
   },
   unmounted() {
     this.$store.dispatch("stopAutoUpdate"); // TODO check which component started and which stopped!
@@ -147,7 +210,7 @@ export default {
         }
       }
     },
-    addPolylineToMap(points) {
+    addPolylineToMap(points, color) {
       const H = window.H;
 
       let connection = [];
@@ -169,9 +232,11 @@ export default {
         this.map.addObject(
           new H.map.Polyline(lineString, {
             style: {
-              lineWidth: 4,
-              strokeColor: "#A10000",
-              fillColor: "rgba(0, 85, 170, 0.4)",
+              lineWidth: 10,
+              strokeColor: color,
+              //   strokeColor: "#A10000",
+            //   fillColor: "rgba(0, 85, 170, 0.4)",
+              fillColor: "rgba(0, 0, 0, 1)",
             },
             zIndex: 0,
           })
