@@ -14,7 +14,7 @@ class DataStore:
         df2_time = []
         self.time_adjustment = None
         for trip in trips:
-            df1 = (pd.read_csv(os.path.join(path_root, 'data', trip, 'gps_data.csv'), ','))
+            df1 = pd.read_csv(os.path.join(path_root, 'data', trip, 'gps_data.csv'), ',')
             df1 = df1.drop('date_time', 1)
             df1['epoch_ts'] = pd.to_datetime(df1['epoch_ts'], unit = 's')
             df1['line'] = trip
@@ -90,7 +90,11 @@ class DataStore:
                 print(f'Setting {i_c} : {i_o} = {i_v}')
             self._data.loc[(i_c+1):(i_o-1), 'Number_of_Passengers'] = self._data['Number_of_Passengers'][i_v]
 
-        self.data = pd.merge(wifi, self._data, how='left', on=['epoch_ts'])
+        self.data = self._data.copy()
+        self.data['epoch_ts'] = pd.to_datetime(self.data['epoch_ts'], unit = 's')
+        self.data = self.data.drop_duplicates(subset='epoch_ts')
+        wifi['epoch_ts'] = pd.to_datetime(wifi['epoch_ts'], unit = 's')
+        self.data = self.data.merge(wifi, how='left', left_on='epoch_ts', right_on='epoch_ts')
 
         if debug:
             print(self.data)
